@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Apresentação evolutiva do case técnico NYC Taxi Pipeline para o iFood">
+  <title>NYC Taxi Pipeline | Case técnico iFood</title>
+  <style>
+    :root {
+      --ifood-red: #ea1d2c;
+      --ifood-red-dark: #b30f24;
+      --wine: #651020;
+      --ink: #261b1d;
+      --muted: #75676a;
+      --cream: #fff8f3;
+      --paper: #ffffff;
+      --soft-red: #ffe8e8;
+      --soft-green: #eaf8ef;
+      --green: #167a45;
+      --line: #eadfde;
+      --shadow: 0 24px 70px rgba(76, 16, 29, 0.14);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: #f4eeea;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    button, a { font: inherit; }
+
+    .deck-shell {
+      width: min(96vw, 1440px);
+      display: grid;
+      gap: 14px;
+    }
+
+    .deck {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      min-height: 620px;
+      overflow: hidden;
+      border-radius: 28px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 22px;
+      padding: clamp(34px, 4vw, 64px);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(28px);
+      transition: opacity 220ms ease, transform 220ms ease, visibility 220ms;
+      background:
+        radial-gradient(circle at 92% 8%, rgba(234, 29, 44, 0.12), transparent 24%),
+        linear-gradient(135deg, #fff 0%, var(--cream) 100%);
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+      z-index: 2;
+    }
+
+    .slide::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      right: -95px;
+      bottom: -115px;
+      border-radius: 48% 52% 62% 38%;
+      background: var(--ifood-red);
+      opacity: 0.08;
+      transform: rotate(22deg);
+      pointer-events: none;
+    }
+
+    .topbar, .footer {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      width: 118px;
+      height: 62px;
+      flex: 0 0 auto;
+      background: url(assets/ifood.svg) center / contain no-repeat;
+      color: var(--ifood-red);
+      font-size: 0;
+      font-weight: 900;
+      letter-spacing: -1.4px;
+    }
+
+    .brand-mark {
+      display: none;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      border-radius: 12px 12px 16px 10px;
+      color: #fff;
+      background: var(--ifood-red);
+      transform: rotate(-5deg);
+      box-shadow: 0 8px 18px rgba(234, 29, 44, 0.24);
+    }
+
+    .brand-mark span { transform: rotate(5deg); }
+
+    .eyebrow {
+      color: var(--ifood-red);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .slide-number {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      min-height: 0;
+      display: grid;
+      align-content: center;
+      gap: 26px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      max-width: 920px;
+      font-size: clamp(46px, 5.4vw, 82px);
+      line-height: 0.98;
+      letter-spacing: -0.055em;
+    }
+
+    h2 {
+      max-width: 980px;
+      font-size: clamp(34px, 3.5vw, 54px);
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+    }
+
+    h3 {
+      font-size: 19px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .lead {
+      max-width: 840px;
+      color: var(--muted);
+      font-size: clamp(18px, 1.55vw, 24px);
+      line-height: 1.5;
+    }
+
+    .red { color: var(--ifood-red); }
+    .mono { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+
+    .hero-layout {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      align-items: center;
+      gap: 50px;
+    }
+
+    .hero-card {
+      position: relative;
+      min-height: 390px;
+      display: grid;
+      place-items: center;
+      border-radius: 36px;
+      overflow: hidden;
+      color: #fff;
+      background: linear-gradient(145deg, var(--ifood-red), var(--wine));
+      box-shadow: 0 24px 50px rgba(174, 20, 40, 0.28);
+    }
+
+    .hero-card::before,
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+    }
+
+    .hero-card::before { width: 320px; height: 320px; left: -170px; top: -120px; }
+    .hero-card::after { width: 250px; height: 250px; right: -115px; bottom: -120px; }
+
+    .taxi-symbol {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .taxi-symbol .icon { font-size: 92px; line-height: 1; }
+    .taxi-symbol strong { display: block; margin-top: 18px; font-size: 25px; }
+    .taxi-symbol small { display: block; margin-top: 8px; opacity: 0.8; font-size: 15px; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--wine);
+      background: rgba(255,255,255,0.86);
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .grid-2, .grid-3, .grid-4 {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+    .card {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255,255,255,0.88);
+      box-shadow: 0 8px 30px rgba(73, 30, 38, 0.055);
+    }
+
+    .card-number {
+      width: 35px;
+      height: 35px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 16px;
+      border-radius: 12px;
+      color: #fff;
+      background: var(--ifood-red);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .card p {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .metric {
+      padding: 22px;
+      border-radius: 22px;
+      background: var(--soft-red);
+    }
+
+    .metric strong {
+      display: block;
+      color: var(--ifood-red);
+      font-size: 34px;
+      letter-spacing: -0.04em;
+    }
+
+    .metric span { display: block; margin-top: 4px; color: var(--muted); font-size: 14px; }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(7, auto);
+      align-items: center;
+      justify-content: center;
+      gap: 13px;
+    }
+
+    .layer {
+      width: 190px;
+      min-height: 190px;
+      display: grid;
+      align-content: start;
+      gap: 10px;
+      padding: 22px;
+      border-radius: 24px;
+      border: 1px solid var(--line);
+      background: #fff;
+      box-shadow: 0 10px 30px rgba(73, 30, 38, 0.07);
+    }
+
+    .layer-icon { font-size: 30px; }
+    .layer small { color: var(--muted); line-height: 1.45; }
+    .arrow { color: var(--ifood-red); font-size: 25px; font-weight: 900; }
+
+    .analogy {
+      padding: 17px 20px;
+      border-left: 5px solid var(--ifood-red);
+      border-radius: 0 16px 16px 0;
+      background: var(--soft-red);
+      color: var(--wine);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .checklist {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 13px 22px;
+    }
+
+    .check-item {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 15px 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+    }
+
+    .check {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--green);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .check.pending { background: #b6a8aa; }
+    .check-item strong { display: block; font-size: 15px; }
+    .check-item small { display: block; margin-top: 4px; color: var(--muted); line-height: 1.35; }
+
+    .runflow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      counter-reset: runstep;
+    }
+
+    .runstep {
+      position: relative;
+      padding: 22px 18px 18px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: #fff;
+      counter-increment: runstep;
+    }
+
+    .runstep::before {
+      content: counter(runstep);
+      position: absolute;
+      top: -13px;
+      left: 18px;
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--ifood-red);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .runstep strong { display: block; margin: 4px 0 8px; }
+    .runstep small { color: var(--muted); line-height: 1.45; }
+
+    .code-path {
+      padding: 14px 17px;
+      border-radius: 14px;
+      color: #fdf7f7;
+      background: #2c2022;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .next-layout {
+      display: grid;
+      grid-template-columns: 1fr 0.86fr;
+      gap: 28px;
+    }
+
+    .milestones { display: grid; gap: 12px; }
+
+    .milestone {
+      display: grid;
+      grid-template-columns: 10px 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 15px 17px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ifood-red); }
+    .milestone small { color: var(--muted); }
+
+    .status {
+      padding: 6px 9px;
+      border-radius: 999px;
+      color: var(--green);
+      background: var(--soft-green);
+      font-size: 11px;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .status.next { color: var(--wine); background: var(--soft-red); }
+
+    .glossary {
+      padding: 24px;
+      border-radius: 24px;
+      color: #fff;
+      background: linear-gradient(145deg, var(--ifood-red), var(--wine));
+    }
+
+    .glossary dl { margin: 18px 0 0; display: grid; gap: 13px; }
+    .glossary dt { font-weight: 850; }
+    .glossary dd { margin: 3px 0 0; opacity: 0.82; font-size: 14px; line-height: 1.4; }
+
+    .footer {
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 14px;
+      padding: 0 8px;
+    }
+
+    .control-group { display: flex; gap: 8px; }
+
+    .control-btn {
+      min-width: 44px;
+      height: 42px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 13px;
+      cursor: pointer;
+      color: #fff;
+      background: var(--ink);
+      font-weight: 800;
+      transition: transform 150ms ease, background 150ms ease;
+    }
+
+    .control-btn:hover { transform: translateY(-1px); background: var(--ifood-red); }
+    .control-btn:focus-visible { outline: 3px solid rgba(234,29,44,.3); outline-offset: 2px; }
+
+    .progress-track {
+      height: 7px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: #ded3d1;
+    }
+
+    .progress-bar {
+      width: 16.66%;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--ifood-red);
+      transition: width 220ms ease;
+    }
+
+    .counter { min-width: 68px; color: var(--muted); font-size: 13px; font-weight: 800; text-align: right; }
+
+    @media (max-width: 1000px) {
+      body { overflow: auto; padding: 12px; }
+      .deck { min-height: 760px; aspect-ratio: auto; }
+      .hero-layout, .next-layout { grid-template-columns: 1fr; }
+      .hero-card { display: none; }
+      .grid-4, .runflow { grid-template-columns: repeat(2, 1fr); }
+      .pipeline { grid-template-columns: 1fr; justify-items: stretch; }
+      .layer { width: 100%; min-height: auto; }
+      .arrow { transform: rotate(90deg); text-align: center; }
+    }
+
+    @media (max-width: 680px) {
+      .deck { min-height: 860px; border-radius: 20px; }
+      .slide { padding: 28px 22px; overflow-y: auto; }
+      .grid-2, .grid-3, .grid-4, .checklist, .runflow { grid-template-columns: 1fr; }
+      .footer { display: none; }
+      .controls { grid-template-columns: auto 1fr auto; }
+      .control-btn .label { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
+    }
+
+    @media print {
+      body { display: block; background: #fff; overflow: visible; }
+      .deck-shell { width: 100%; display: block; }
+      .deck { overflow: visible; min-height: auto; aspect-ratio: auto; box-shadow: none; }
+      .slide, .slide.active {
+        position: relative;
+        min-height: 100vh;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        page-break-after: always;
+      }
+      .controls { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck-shell" aria-label="Apresentação do case NYC Taxi Pipeline">
+    <section class="deck" id="deck">
+      <article class="slide active" aria-hidden="false">
+        <header class="topbar">
+          <div class="brand"><span class="brand-mark"><span>iF</span></span> iFood</div>
+          <span class="slide-number">CASE TÉCNICO · DATA ARCHITECT</span>
+        </header>
+        <div class="content hero-layout">
+          <div>
+            <div class="eyebrow">Engenharia de dados · apresentação evolutiva</div>
+            <h1>NYC Taxi<br><span class="red">Data Pipeline</span></h1>
+            <p class="lead">Como transformar corridas de táxi de Nova York em dados confiáveis, consultáveis e prontos para responder perguntas de negócio.</p>
+            <div class="chips" style="margin-top: 24px">
+              <span class="chip">PySpark</span>
+              <span class="chip">Databricks Free Edition</span>
+              <span class="chip">Delta Lake</span>
+              <span class="chip">SQL</span>
+            </div>
+          </div>
+          <div class="hero-card" aria-label="Ilustração de táxi e dados">
+            <div class="taxi-symbol">
+              <div class="icon">🚕</div>
+              <strong>10 arquivos · 5 meses</strong>
+              <small>Yellow + Green Taxi · Jan–Mai/2023</small>
+            </div>
+          </div>
+        </div>
+        <footer class="footer"><span>Elianderson · Case iFood</span><span>Atualização 01 · Fundação do pipeline</span></footer>
+      </article>
+
+      <article class="slide" aria-hidden="true">
+        <header class="topbar">
+          <div class="brand"><span class="brand-mark"><span>iF</span></span> iFood</div>
+          <span class="slide-number">01 · O DESAFIO</span>
+        </header>
+        <div class="content">
+          <div>
+            <div class="eyebrow">Do arquivo bruto à decisão</div>
+            <h2>O que o case precisa entregar?</h2>
+          </div>
+          <div class="grid-3">
+            <div class="card">
+              <div class="card-number">1</div>
+              <h3>Ingerir</h3>
+              <p>Armazenar as corridas de janeiro a maio de 2023 em um Data Lake.</p>
+            </div>
+            <div class="card">
+              <div class="card-number">2</div>
+              <h3>Disponibilizar</h3>
+              <p>Criar tabelas estruturadas que qualquer consumidor consiga consultar com SQL.</p>
+            </div>
+            <div class="card">
+              <div class="card-number">3</div>
+              <h3>Analisar</h3>
+              <p>Responder duas perguntas de negócio e comunicar os resultados com clareza.</p>
+            </div>
+          </div>
+          <div class="grid-3">
+            <div class="metric"><strong>5</strong><span>meses processados</span></div>
+            <div class="metric"><strong>2</strong><span>tipos de táxi</span></div>
+            <div class="metric"><strong>2</strong><span>perguntas analíticas</span></div>
+          </div>
+        </div>
+        <footer class="footer"><span>Fonte: NYC Taxi & Limousine Commission</span><span>Uso obrigatório de PySpark em alguma etapa</span></footer>
+      </article>
+
+      <article class="slide" aria-hidden="true">
+        <header class="topbar">
+          <div class="brand"><span class="brand-mark"><span>iF</span></span> iFood</div>
+          <span class="slide-number">02 · ESCOPO DOS DADOS</span>
+        </header>
+        <div class="content">
+          <div>
+            <div class="eyebrow">Uma escolha guiada pelas perguntas</div>
+            <h2>Por que Yellow <span class="red">e</span> Green Taxi?</h2>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <h3>🚕 Pergunta 1 · Yellow Taxi</h3>
+              <p>Calcular a média mensal de <span class="mono">total_amount</span> para toda a frota Yellow.</p>
+              <div class="chips" style="margin-top: 16px"><span class="chip">5 Parquets</span><span class="chip">jan–mai</span></div>
+            </div>
+            <div class="card">
+              <h3>🚖 Pergunta 2 · Todos os táxis</h3>
+              <p>Calcular a média de passageiros por hora em maio combinando Yellow e Green.</p>
+              <div class="chips" style="margin-top: 16px"><span class="chip">Yellow + Green</span><span class="chip">24 horas</span></div>
+            </div>
+          </div>
+          <div class="analogy"><strong>Contrato mínimo de consumo:</strong> VendorID, passenger_count, total_amount, tpep_pickup_datetime e tpep_dropoff_datetime permanecem disponíveis na tabela Silver de Yellow Taxi.</div>
+        </div>
+        <footer class="footer"><span>FHV e HVFHV ficam fora do escopo</span><span>Os arquivos originais permanecem preservados</span></footer>
+      </article>
+
+      <article class="slide" aria-hidden="true">
+        <header class="topbar">
+          <div class="brand"><span class="brand-mark"><span>iF</span></span> iFood</div>
+          <span class="slide-number">03 · ARQUITETURA</span>
+        </header>
+        <div class="content">
+          <div>
+            <div class="eyebrow">Separação simples de responsabilidades</div>
+            <h2>Do dado original à resposta pronta</h2>
+          </div>
+          <div class="pipeline" aria-label="Fluxo das camadas do pipeline">
+            <div class="layer"><span class="layer-icon">📦</span><h3>Landing</h3><small>Parquets originais, sem alteração. É nosso ponto de reprocessamento.</small></div>
+            <span class="arrow">→</span>
+            <div class="layer"><span class="layer-icon">🥉</span><h3>Bronze</h3><small>Tipos padronizados e metadados sobre arquivo, mês e ingestão.</small></div>
+            <span class="arrow">→</span>
+            <div class="layer"><span class="layer-icon">🥈</span><h3>Silver</h3><small>Dados limpos, deduplicados, unificados e consultáveis.</small></div>
+            <span class="arrow">→</span>
+            <div class="layer"><span class="layer-icon">🥇</span><h3>Gold</h3><small>Métricas prontas para SQL, apresentação e tomada de decisão.</small></div>
+          </div>
+          <div class="analogy"><strong>Em linguagem simples:</strong> Landing guarda a embalagem original; Bronze organiza; Silver confere a qualidade; Gold entrega a resposta.</div>
+        </div>
+        <footer class="footer"><span>Unity Catalog Volume + tabelas Delta</span><span>Full refresh idempotente para o recorte fixo</span></footer>
+      </article>
+
+      <article class="slide" aria-hidden="true">
+        <header class="topbar">
+          <div class="brand"><span class="brand-mark"><span>iF</span></span> iFood</div>
+          <span class="slide-number">04 · O QUE JÁ FOI FEITO</span>
+        </header>
+        <div class="content">
+          <div>
+            <div class="eyebrow">Checkpoint atual</div>
+            <h2>A fundação está pronta</h2>
+          </div>
+          <div class="checklist">
+            <div class="check-item"><span class="check">✓</span><div><strong>Databricks configurado</strong><small>Compute Serverless e Spark 4.1 validados.</small></div></div>
+            <div class="check-item"><span class="check">✓</span><div><strong>Lakehouse criado</strong><small>Schemas Bronze, Silver, Gold e Volume Landing.</small></div></div>
+            <div class="check-item"><span class="check">✓</span><div><strong>Requisitos documentados</strong><small>Escopo, arquitetura e decisões técnicas no repositório.</small></div></div>
+            <div class="check-item"><span class="check">✓</span><div><strong>Bronze implementada</strong><small>Validação dos dez arquivos e tratamento de schema drift.</small></div></div>
+            <div class="check-item"><span class="check">✓</span><div><strong>Silver implementada</strong><small>Qualidade, deduplicação, contrato e quarentena.</small></div></div>
+            <div class="check-item"><span class="check">✓</span><div><strong>Gold implementada</strong><small>Duas métricas e consultas SQL prontas.</small></div></div>
+            <div class="check-item"><span class="check">✓</span><div><strong>Sintaxe validada</strong><small>Quatro notebooks verificados com Python 3.12.</small></div></div>
+            <div class="check-item"><span class="check pending">…</span><div><strong>Execução com dados</strong><small>Pendente: carregar Parquets e validar números no Spark.</small></div></div>
+          </div>
+        </div>
+        <footer class="footer"><span>Código local: C:\Users\elian\nyc-taxi-pipeline</span><span>Sem resultados inventados antes da execução</span></footer>
+      </article>
+
+      <article class="slide" aria-hidden="true">
+        <header class="topbar">
+          <div class="brand"><span class="brand-mark"><span>iF</span></span> iFood</div>
+          <span class="slide-number">05 · EXECUÇÃO E PRÓXIMOS PASSOS</span>
+        </header>
+        <div class="content next-layout">
+          <div>
+            <div class="eyebrow">Caminho reproduzível</div>
+            <h2>Como o projeto será executado?</h2>
+            <div class="runflow" style="margin-top: 28px">
+              <div class="runstep"><strong>GitHub</strong><small>Versiona notebooks e documentação.</small></div>
+              <div class="runstep"><strong>Git Folder</strong><small>Leva o mesmo código ao Databricks.</small></div>
+              <div class="runstep"><strong>Serverless</strong><small>Executa PySpark sem gerenciar cluster.</small></div>
+              <div class="runstep"><strong>SQL</strong><small>Consulta Silver e Gold.</small></div>
+            </div>
+            <div class="code-path" style="margin-top: 24px">00_setup → 01_bronze_ingestion → 02_silver_transformation → 03_gold_analytics</div>
+          </div>
+          <div class="glossary">
+            <h3>Próximo marco</h3>
+            <dl>
+              <div><dt>1. Publicar no GitHub</dt><dd>Transformar o repositório local na fonte oficial.</dd></div>
+              <div><dt>2. Conectar Git Folder</dt><dd>Evitar cópias manuais entre VS Code e Databricks.</dd></div>
+              <div><dt>3. Carregar 10 Parquets</dt><dd>Disponibilizar Yellow e Green na Landing.</dd></div>
+              <div><dt>4. Executar e medir</dt><dd>Validar volumes, qualidade, Gold e resultados.</dd></div>
+            </dl>
+          </div>
+        </div>
+        <footer class="footer"><span>Esta apresentação será atualizada a cada marco</span><span>← → para navegar · imprimir para gerar PDF</span></footer>
+      </article>
+    </section>
+
+    <nav class="controls" aria-label="Controles da apresentação">
+      <div class="control-group">
+        <button class="control-btn" id="previous" type="button" aria-label="Slide anterior">← <span class="label">Anterior</span></button>
+        <button class="control-btn" id="next" type="button" aria-label="Próximo slide"><span class="label">Próximo</span> →</button>
+      </div>
+      <div class="progress-track" aria-hidden="true"><div class="progress-bar" id="progress"></div></div>
+      <div class="counter" id="counter" aria-live="polite">1 / 6</div>
+    </nav>
+  </main>
+
+  <script>
+    (() => {
+      const slides = [...document.querySelectorAll('.slide')];
+      const previousButton = document.querySelector('#previous');
+      const nextButton = document.querySelector('#next');
+      const progress = document.querySelector('#progress');
+      const counter = document.querySelector('#counter');
+      let current = 0;
+
+      function showSlide(index) {
+        current = (index + slides.length) % slides.length;
+        slides.forEach((slide, slideIndex) => {
+          const isActive = slideIndex === current;
+          slide.classList.toggle('active', isActive);
+          slide.setAttribute('aria-hidden', String(!isActive));
+        });
+        progress.style.width = `${((current + 1) / slides.length) * 100}%`;
+        counter.textContent = `${current + 1} / ${slides.length}`;
+        document.title = `${current + 1}/${slides.length} · NYC Taxi Pipeline | Case iFood`;
+      }
+
+      previousButton.addEventListener('click', () => showSlide(current - 1));
+      nextButton.addEventListener('click', () => showSlide(current + 1));
+
+      document.addEventListener('keydown', (event) => {
+        if (['ArrowRight', 'PageDown', ' '].includes(event.key)) {
+          event.preventDefault();
+          showSlide(current + 1);
+        }
+        if (['ArrowLeft', 'PageUp'].includes(event.key)) {
+          event.preventDefault();
+          showSlide(current - 1);
+        }
+        if (event.key === 'Home') showSlide(0);
+        if (event.key === 'End') showSlide(slides.length - 1);
+      });
+
+      showSlide(0);
+    })();
+  </script>
+</body>
+</html>

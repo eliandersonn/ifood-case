@@ -1,0 +1,10 @@
+
+.databricks
+
+# Dados de origem e artefatos locais não devem ser versionados.
+data/
+*.parquet
+__pycache__/
+.pytest_cache/
+.venv/
+.env
