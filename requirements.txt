@@ -1,0 +1,2 @@
+# O Databricks fornece Delta Lake e dbutils no ambiente de execução.
+pyspark==4.1.0

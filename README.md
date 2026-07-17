@@ -42,20 +42,39 @@ A evolução do case é registrada em uma apresentação HTML curta e navegável
 
 Os notebooks devem ser executados nesta ordem:
 
-1. `00_setup.py` — cria schemas e o Volume de Landing.
-2. `01_bronze_ingestion.py` — baixa os arquivos para a Landing e publica as tabelas Bronze.
-3. `02_silver_transformation.py` — aplica qualidade e publica tabelas Silver.
-4. `03_gold_analytics.py` — cria agregações Gold e mostra as respostas.
+1. `src/00_setup.py` — cria schemas e o Volume de Landing.
+2. `src/01_bronze_ingestion.py` — baixa os arquivos para a Landing e publica as tabelas Bronze.
+3. `src/02_silver_transformation.py` — aplica qualidade e publica tabelas Silver.
+4. `src/03_gold_analytics.py` — cria as agregações Gold.
+5. `analysis/*.sql` — consulta as respostas diretamente nas tabelas Gold.
 
 > Os arquivos Parquet não são versionados. O notebook Bronze baixa os arquivos
 > oficiais diretamente para o Volume de Landing e ignora os que já existem.
 
+## Dependências
+
+O Databricks Serverless já fornece PySpark, Delta Lake e `dbutils`; portanto,
+nenhuma instalação é necessária no workspace. O `requirements.txt` registra
+a versão do PySpark usada pelo projeto para validações locais:
+
+```bash
+pip install -r requirements.txt
+```
+
 ## Estrutura
 
 ```text
-├── analysis/      # consultas SQL das perguntas do case
-├── docs/          # requisitos, arquitetura e decisões técnicas
-└── notebooks/     # notebooks PySpark para execução no Databricks
+├── src/
+│   ├── 00_setup.py
+│   ├── 01_bronze_ingestion.py
+│   ├── 02_silver_transformation.py
+│   └── 03_gold_analytics.py
+├── analysis/
+│   ├── 01_yellow_monthly_amount.sql
+│   └── 02_may_hourly_passengers.sql
+├── docs/
+├── README.md
+└── requirements.txt
 ```
 
 ## Fonte de dados
