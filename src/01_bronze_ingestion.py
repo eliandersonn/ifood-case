@@ -95,7 +95,7 @@ def download_to_landing(file_name: str) -> dict:
 
     request = urllib.request.Request(
         source_url,
-        headers={'User-Agent': 'nyc-taxi-pipeline/1.0'},
+        headers={'User-Agent': 'ifood-case/1.0'},
     )
 
     for attempt in range(1, DOWNLOAD_RETRIES + 1):
