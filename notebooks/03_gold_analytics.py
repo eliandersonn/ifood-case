@@ -108,7 +108,7 @@ spark.sql(
     FROM {MONTHLY_AMOUNT_TABLE}
     ORDER BY pickup_month
     """
-).show(truncate=False)
+).show(5, truncate=False)
 
 spark.sql(
     f"""
@@ -116,4 +116,4 @@ spark.sql(
     FROM {MAY_PASSENGERS_TABLE}
     ORDER BY pickup_hour
     """
-).show(truncate=False)
+).show(24, truncate=False)

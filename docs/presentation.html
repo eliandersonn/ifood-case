@@ -570,7 +570,7 @@
             </div>
           </div>
         </div>
-        <footer class="footer"><span>Elianderson · Case iFood</span><span>Atualização 02 · Ingestão automatizada</span></footer>
+        <footer class="footer"><span>Elianderson · Case iFood</span><span>Atualização 03 · Pipeline concluído</span></footer>
       </article>
 
       <article class="slide" aria-hidden="true">
@@ -668,7 +668,7 @@
         <div class="content">
           <div>
             <div class="eyebrow">Checkpoint atual</div>
-            <h2>A fundação está pronta</h2>
+            <h2>O pipeline foi validado</h2>
           </div>
           <div class="checklist">
             <div class="check-item"><span class="check">✓</span><div><strong>Databricks configurado</strong><small>Compute Serverless e Spark 4.1 validados.</small></div></div>
@@ -678,40 +678,37 @@
             <div class="check-item"><span class="check">✓</span><div><strong>Silver implementada</strong><small>Qualidade, deduplicação, contrato e quarentena.</small></div></div>
             <div class="check-item"><span class="check">✓</span><div><strong>Gold implementada</strong><small>Duas métricas e consultas SQL prontas.</small></div></div>
             <div class="check-item"><span class="check">✓</span><div><strong>Sintaxe validada</strong><small>Quatro notebooks verificados com Python 3.12.</small></div></div>
-            <div class="check-item"><span class="check pending">…</span><div><strong>Execução com dados</strong><small>Pendente: executar Bronze, Silver e Gold e validar os resultados.</small></div></div>
+            <div class="check-item"><span class="check">✓</span><div><strong>Execução com dados</strong><small>16,5 milhões de corridas processadas de ponta a ponta.</small></div></div>
           </div>
         </div>
-        <footer class="footer"><span>Código local: C:\Users\elian\nyc-taxi-pipeline</span><span>Sem resultados inventados antes da execução</span></footer>
+        <footer class="footer"><span>Código e resultados versionados no GitHub</span><span>Bronze, Silver e Gold executadas no Spark</span></footer>
       </article>
 
       <article class="slide" aria-hidden="true">
         <header class="topbar">
           <div class="brand"><span class="brand-mark"><span>iF</span></span> iFood</div>
-          <span class="slide-number">05 · EXECUÇÃO E PRÓXIMOS PASSOS</span>
+          <span class="slide-number">05 · RESULTADOS</span>
         </header>
-        <div class="content next-layout">
+        <div class="content">
           <div>
-            <div class="eyebrow">Caminho reproduzível</div>
-            <h2>Como o projeto será executado?</h2>
-            <div class="runflow" style="margin-top: 28px">
-              <div class="runstep"><strong>GitHub</strong><small>Versiona notebooks e documentação.</small></div>
-              <div class="runstep"><strong>Git Folder</strong><small>Leva o mesmo código ao Databricks.</small></div>
-              <div class="runstep"><strong>Serverless</strong><small>Executa PySpark sem gerenciar cluster.</small></div>
-              <div class="runstep"><strong>SQL</strong><small>Consulta Silver e Gold.</small></div>
+            <div class="eyebrow">Respostas materializadas na Gold</div>
+            <h2>O que os dados mostram?</h2>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <h3>💰 Total amount · Yellow</h3>
+              <p>A média passou de <strong>27,45</strong> em janeiro para <strong>29,46</strong> em maio.</p>
+              <div class="chips" style="margin-top: 16px"><span class="chip">+7,3%</span><span class="chip">Maio: 102,5 mi</span></div>
             </div>
-            <div class="code-path" style="margin-top: 24px">00_setup → 01_bronze_ingestion → 02_silver_transformation → 03_gold_analytics</div>
+            <div class="card">
+              <h3>👥 Passageiros · Maio</h3>
+              <p>A média por corrida variou de <strong>1,26 às 6h</strong> a <strong>1,45 às 2h e 3h</strong>.</p>
+              <div class="chips" style="margin-top: 16px"><span class="chip">24 horas</span><span class="chip">3,38 mi corridas</span></div>
+            </div>
           </div>
-          <div class="glossary">
-            <h3>Execução do pipeline</h3>
-            <dl>
-              <div><dt>1. GitHub publicado ✓</dt><dd>Repositório definido como fonte oficial.</dd></div>
-              <div><dt>2. Git Folder conectado ✓</dt><dd>Mesmo código disponível no Databricks.</dd></div>
-              <div><dt>3. Executar Bronze</dt><dd>Baixar automaticamente os 10 Parquets e publicar Delta.</dd></div>
-              <div><dt>4. Executar Silver e Gold</dt><dd>Validar qualidade, métricas e respostas.</dd></div>
-            </dl>
-          </div>
+          <div class="analogy"><strong>Qualidade observável:</strong> 16.373.639 corridas válidas e 152.239 preservadas em quarentena, sem descarte silencioso.</div>
         </div>
-        <footer class="footer"><span>Esta apresentação será atualizada a cada marco</span><span>← → para navegar · imprimir para gerar PDF</span></footer>
+        <footer class="footer"><span>Resultados completos em docs/results.md</span><span>← → para navegar · imprimir para gerar PDF</span></footer>
       </article>
     </section>
 

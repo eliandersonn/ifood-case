@@ -85,3 +85,15 @@ alteração do código. Para incluir junho, por exemplo, execute o notebook com
 A carga Bronze usa full refresh para manter o recorte do case simples e
 idempotente. Em uma evolução incremental, a escrita mensal pode usar
 `replaceWhere` ou `MERGE` para reprocessar somente as partições afetadas.
+
+## Resultados
+
+- Foram processadas 16.526.016 corridas na Bronze.
+- A Silver disponibilizou 16.373.639 corridas válidas e preservou 152.239
+  registros na quarentena.
+- A média mensal de `total_amount` dos Yellow Taxis passou de 27,45 em
+  janeiro para 29,46 em maio.
+- Em maio, a média horária de passageiros variou entre 1,26 e 1,45.
+
+As respostas completas e a metodologia estão em
+[docs/results.md](docs/results.md).
