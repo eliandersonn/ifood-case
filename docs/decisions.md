@@ -13,6 +13,10 @@ independentes: Fonte → Landing e Landing → Bronze. O download ocorre em chun
 com retry, arquivo temporário e verificação de tamanho. Arquivos válidos já
 presentes são ignorados, tornando a aquisição idempotente.
 
+A URL da NYC TLC é mantida como catálogo oficial e referência documental. O
+download utiliza o endpoint CloudFront para o qual os links da própria página
+apontam; ele é o endereço físico dos Parquets, não uma fonte alternativa.
+
 ## Como incluir novos meses?
 
 O período é recebido pelos widgets `start_month` e `end_month`. Para incluir

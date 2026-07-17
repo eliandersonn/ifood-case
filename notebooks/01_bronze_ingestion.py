@@ -29,7 +29,10 @@ dbutils.widgets.text('end_month', '2023-05', 'Mês final (AAAA-MM)')
 
 START_MONTH = dbutils.widgets.get('start_month')
 END_MONTH = dbutils.widgets.get('end_month')
-SOURCE_BASE_URL = 'https://d37ci6vzurychx.cloudfront.net/trip-data'
+
+# A página da TLC documenta os datasets; o CloudFront entrega os Parquets.
+TLC_CATALOG_URL = 'https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page'
+TLC_DATA_BASE_URL = 'https://d37ci6vzurychx.cloudfront.net/trip-data'
 
 
 def build_month_range(start_month: str, end_month: str) -> list[str]:
@@ -56,6 +59,8 @@ EXPECTED_FILES = {
     for taxi_type in ("yellow", "green")
 }
 
+print(f'Catálogo oficial: {TLC_CATALOG_URL}')
+print(f'Endpoint dos arquivos: {TLC_DATA_BASE_URL}')
 print(f'Período configurado: {START_MONTH} até {END_MONTH}')
 print(f'Arquivos esperados: {sum(map(len, EXPECTED_FILES.values()))}')
 
@@ -77,7 +82,7 @@ DOWNLOAD_RETRIES = 3
 def download_to_landing(file_name: str) -> dict:
     '''Baixa um arquivo de forma idempotente, com retry e escrita atômica.'''
 
-    source_url = f'{SOURCE_BASE_URL}/{file_name}'
+    source_url = f'{TLC_DATA_BASE_URL}/{file_name}'
     destination = f'{LANDING_PATH}/{file_name}'
     temporary_destination = f'{destination}.part'
 

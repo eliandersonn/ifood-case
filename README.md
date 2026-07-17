@@ -60,9 +60,14 @@ Os notebooks devem ser executados nesta ordem:
 
 ## Fonte de dados
 
-- [NYC TLC Trip Record Data](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
+- Catálogo oficial: [NYC TLC Trip Record Data](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page).
+- Endpoint dos Parquets: `https://d37ci6vzurychx.cloudfront.net/trip-data`.
 - Período: janeiro a maio de 2023.
 - Tipos: Yellow Taxi e Green Taxi.
+
+A página da NYC TLC é a referência institucional. Os links de download
+publicados nela apontam para o CloudFront, utilizado pelo pipeline para obter
+os arquivos Parquet.
 
 ## Aquisição dos arquivos
 
