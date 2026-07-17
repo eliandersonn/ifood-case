@@ -570,7 +570,7 @@
             </div>
           </div>
         </div>
-        <footer class="footer"><span>Elianderson · Case iFood</span><span>Atualização 01 · Fundação do pipeline</span></footer>
+        <footer class="footer"><span>Elianderson · Case iFood</span><span>Atualização 02 · Ingestão automatizada</span></footer>
       </article>
 
       <article class="slide" aria-hidden="true">
@@ -647,7 +647,7 @@
             <h2>Do dado original à resposta pronta</h2>
           </div>
           <div class="pipeline" aria-label="Fluxo das camadas do pipeline">
-            <div class="layer"><span class="layer-icon">📦</span><h3>Landing</h3><small>Parquets originais, sem alteração. É nosso ponto de reprocessamento.</small></div>
+            <div class="layer"><span class="layer-icon">📦</span><h3>Landing</h3><small>Download automático e preservação dos Parquets originais.</small></div>
             <span class="arrow">→</span>
             <div class="layer"><span class="layer-icon">🥉</span><h3>Bronze</h3><small>Tipos padronizados e metadados sobre arquivo, mês e ingestão.</small></div>
             <span class="arrow">→</span>
@@ -674,11 +674,11 @@
             <div class="check-item"><span class="check">✓</span><div><strong>Databricks configurado</strong><small>Compute Serverless e Spark 4.1 validados.</small></div></div>
             <div class="check-item"><span class="check">✓</span><div><strong>Lakehouse criado</strong><small>Schemas Bronze, Silver, Gold e Volume Landing.</small></div></div>
             <div class="check-item"><span class="check">✓</span><div><strong>Requisitos documentados</strong><small>Escopo, arquitetura e decisões técnicas no repositório.</small></div></div>
-            <div class="check-item"><span class="check">✓</span><div><strong>Bronze implementada</strong><small>Validação dos dez arquivos e tratamento de schema drift.</small></div></div>
+            <div class="check-item"><span class="check">✓</span><div><strong>Bronze automatizada</strong><small>Download idempotente, validação e tratamento de schema drift.</small></div></div>
             <div class="check-item"><span class="check">✓</span><div><strong>Silver implementada</strong><small>Qualidade, deduplicação, contrato e quarentena.</small></div></div>
             <div class="check-item"><span class="check">✓</span><div><strong>Gold implementada</strong><small>Duas métricas e consultas SQL prontas.</small></div></div>
             <div class="check-item"><span class="check">✓</span><div><strong>Sintaxe validada</strong><small>Quatro notebooks verificados com Python 3.12.</small></div></div>
-            <div class="check-item"><span class="check pending">…</span><div><strong>Execução com dados</strong><small>Pendente: carregar Parquets e validar números no Spark.</small></div></div>
+            <div class="check-item"><span class="check pending">…</span><div><strong>Execução com dados</strong><small>Pendente: executar Bronze, Silver e Gold e validar os resultados.</small></div></div>
           </div>
         </div>
         <footer class="footer"><span>Código local: C:\Users\elian\nyc-taxi-pipeline</span><span>Sem resultados inventados antes da execução</span></footer>
@@ -702,12 +702,12 @@
             <div class="code-path" style="margin-top: 24px">00_setup → 01_bronze_ingestion → 02_silver_transformation → 03_gold_analytics</div>
           </div>
           <div class="glossary">
-            <h3>Próximo marco</h3>
+            <h3>Execução do pipeline</h3>
             <dl>
-              <div><dt>1. Publicar no GitHub</dt><dd>Transformar o repositório local na fonte oficial.</dd></div>
-              <div><dt>2. Conectar Git Folder</dt><dd>Evitar cópias manuais entre VS Code e Databricks.</dd></div>
-              <div><dt>3. Carregar 10 Parquets</dt><dd>Disponibilizar Yellow e Green na Landing.</dd></div>
-              <div><dt>4. Executar e medir</dt><dd>Validar volumes, qualidade, Gold e resultados.</dd></div>
+              <div><dt>1. GitHub publicado ✓</dt><dd>Repositório definido como fonte oficial.</dd></div>
+              <div><dt>2. Git Folder conectado ✓</dt><dd>Mesmo código disponível no Databricks.</dd></div>
+              <div><dt>3. Executar Bronze</dt><dd>Baixar automaticamente os 10 Parquets e publicar Delta.</dd></div>
+              <div><dt>4. Executar Silver e Gold</dt><dd>Validar qualidade, métricas e respostas.</dd></div>
             </dl>
           </div>
         </div>

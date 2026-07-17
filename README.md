@@ -43,11 +43,12 @@ A evolução do case é registrada em uma apresentação HTML curta e navegável
 Os notebooks devem ser executados nesta ordem:
 
 1. `00_setup.py` — cria schemas e o Volume de Landing.
-2. `01_bronze_ingestion.py` — valida os arquivos e publica as tabelas Bronze.
+2. `01_bronze_ingestion.py` — baixa os arquivos para a Landing e publica as tabelas Bronze.
 3. `02_silver_transformation.py` — aplica qualidade e publica tabelas Silver.
 4. `03_gold_analytics.py` — cria agregações Gold e mostra as respostas.
 
-> Os arquivos Parquet não são versionados. Eles devem ser baixados da NYC TLC e enviados ao Volume de Landing antes da etapa Bronze.
+> Os arquivos Parquet não são versionados. O notebook Bronze baixa os arquivos
+> oficiais diretamente para o Volume de Landing e ignora os que já existem.
 
 ## Estrutura
 
@@ -63,11 +64,19 @@ Os notebooks devem ser executados nesta ordem:
 - Período: janeiro a maio de 2023.
 - Tipos: Yellow Taxi e Green Taxi.
 
-## Arquivos esperados na Landing
+## Aquisição dos arquivos
 
-O pipeline valida a presença dos dez arquivos antes de iniciar a Bronze:
+Por padrão, o pipeline baixa e valida os dez arquivos do período do case:
 
 ```text
 yellow_tripdata_2023-01.parquet até yellow_tripdata_2023-05.parquet
 green_tripdata_2023-01.parquet até green_tripdata_2023-05.parquet
 ```
+
+Os widgets `start_month` e `end_month` controlam o período sem exigir
+alteração do código. Para incluir junho, por exemplo, execute o notebook com
+`end_month=2023-06`; somente os arquivos ausentes serão baixados.
+
+A carga Bronze usa full refresh para manter o recorte do case simples e
+idempotente. Em uma evolução incremental, a escrita mensal pode usar
+`replaceWhere` ou `MERGE` para reprocessar somente as partições afetadas.

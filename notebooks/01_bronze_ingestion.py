@@ -2,11 +2,17 @@
 # MAGIC %md
 # MAGIC # 01 — Ingestão Bronze
 # MAGIC
-# MAGIC Valida os dez arquivos esperados na Landing Zone, padroniza os tipos
-# MAGIC necessários e publica tabelas Delta Bronze com rastreabilidade.
+# MAGIC Automatiza a aquisição dos dez Parquets oficiais da NYC TLC, preserva
+# MAGIC os arquivos originais na Landing Zone e publica tabelas Delta Bronze
+# MAGIC com schema técnico consistente e rastreabilidade.
 
 # COMMAND ----------
 
+import os
+import time
+import urllib.error
+import urllib.request
+from datetime import datetime
 from functools import reduce
 
 from pyspark.sql import DataFrame
@@ -16,19 +22,128 @@ from pyspark.sql.types import DoubleType, IntegerType, TimestampType
 CATALOG = "workspace"
 BRONZE_SCHEMA = "nyc_taxi_bronze"
 LANDING_PATH = f"/Volumes/{CATALOG}/{BRONZE_SCHEMA}/landing"
-MONTHS = [f"2023-{month:02d}" for month in range(1, 6)]
 
+# O período pode ser ampliado sem alterar a lógica do pipeline.
+dbutils.widgets.text('start_month', '2023-01', 'Mês inicial (AAAA-MM)')
+dbutils.widgets.text('end_month', '2023-05', 'Mês final (AAAA-MM)')
+
+START_MONTH = dbutils.widgets.get('start_month')
+END_MONTH = dbutils.widgets.get('end_month')
+SOURCE_BASE_URL = 'https://d37ci6vzurychx.cloudfront.net/trip-data'
+
+
+def build_month_range(start_month: str, end_month: str) -> list[str]:
+    '''Gera uma lista mensal inclusiva no formato AAAA-MM.'''
+
+    start = datetime.strptime(start_month, '%Y-%m').date().replace(day=1)
+    end = datetime.strptime(end_month, '%Y-%m').date().replace(day=1)
+    if start > end:
+        raise ValueError('O mês inicial não pode ser posterior ao mês final.')
+
+    months = []
+    current = start
+    while current <= end:
+        months.append(current.strftime('%Y-%m'))
+        next_year = current.year + (current.month == 12)
+        next_month = 1 if current.month == 12 else current.month + 1
+        current = current.replace(year=next_year, month=next_month)
+    return months
+
+
+MONTHS = build_month_range(START_MONTH, END_MONTH)
 EXPECTED_FILES = {
     taxi_type: [f"{taxi_type}_tripdata_{month}.parquet" for month in MONTHS]
     for taxi_type in ("yellow", "green")
 }
 
+print(f'Período configurado: {START_MONTH} até {END_MONTH}')
+print(f'Arquivos esperados: {sum(map(len, EXPECTED_FILES.values()))}')
+
+# COMMAND ----------
+# MAGIC %md
+# MAGIC ## Fonte → Landing
+# MAGIC
+# MAGIC Os arquivos são baixados da URL oficial somente quando ainda não existem.
+# MAGIC A escrita ocorre em chunks e usa um arquivo temporário, evitando consumo
+# MAGIC excessivo de memória e arquivos finais incompletos em caso de falha.
+
+# COMMAND ----------
+
+DOWNLOAD_CHUNK_BYTES = 1024 * 1024
+DOWNLOAD_TIMEOUT_SECONDS = 300
+DOWNLOAD_RETRIES = 3
+
+
+def download_to_landing(file_name: str) -> dict:
+    '''Baixa um arquivo de forma idempotente, com retry e escrita atômica.'''
+
+    source_url = f'{SOURCE_BASE_URL}/{file_name}'
+    destination = f'{LANDING_PATH}/{file_name}'
+    temporary_destination = f'{destination}.part'
+
+    if os.path.exists(destination) and os.path.getsize(destination) > 0:
+        return {
+            'file_name': file_name,
+            'status': 'skipped',
+            'size_bytes': os.path.getsize(destination),
+        }
+
+    request = urllib.request.Request(
+        source_url,
+        headers={'User-Agent': 'nyc-taxi-pipeline/1.0'},
+    )
+
+    for attempt in range(1, DOWNLOAD_RETRIES + 1):
+        try:
+            with urllib.request.urlopen(
+                request,
+                timeout=DOWNLOAD_TIMEOUT_SECONDS,
+            ) as response, open(temporary_destination, 'wb') as target_file:
+                while chunk := response.read(DOWNLOAD_CHUNK_BYTES):
+                    target_file.write(chunk)
+
+            if os.path.getsize(temporary_destination) == 0:
+                raise OSError(f'Download vazio: {file_name}')
+
+            os.replace(temporary_destination, destination)
+            return {
+                'file_name': file_name,
+                'status': 'downloaded',
+                'size_bytes': os.path.getsize(destination),
+            }
+        except (OSError, TimeoutError, urllib.error.URLError) as error:
+            if os.path.exists(temporary_destination):
+                os.remove(temporary_destination)
+            if attempt == DOWNLOAD_RETRIES:
+                raise RuntimeError(
+                    f'Falha ao baixar {file_name} após {attempt} tentativas.'
+                ) from error
+            time.sleep(2**attempt)
+
+    raise RuntimeError(f'Estado inesperado durante o download de {file_name}.')
+
+
+download_results = [
+    download_to_landing(file_name)
+    for files_by_type in EXPECTED_FILES.values()
+    for file_name in files_by_type
+]
+
+for result in download_results:
+    size_mb = result['size_bytes'] / (1024**2)
+    print(
+        '{status:>10} | {file_name} | {size_mb:.1f} MB'.format(
+            size_mb=size_mb,
+            **result,
+        )
+    )
+
 # COMMAND ----------
 # MAGIC %md
 # MAGIC ## Validação da Landing Zone
 # MAGIC
-# MAGIC A execução é interrompida quando algum arquivo não está disponível.
-# MAGIC Isso evita publicar uma tabela parcial sem sinalizar o problema.
+# MAGIC A execução é interrompida quando algum arquivo do período configurado
+# MAGIC não está disponível. Isso evita publicar uma tabela Bronze parcial.
 
 # COMMAND ----------
 
@@ -57,7 +172,7 @@ print(f"Arquivos adicionais ignorados: {unexpected_files}")
 
 # COMMAND ----------
 # MAGIC %md
-# MAGIC ## Leitura e padronização técnica
+# MAGIC ## Landing → Bronze
 # MAGIC
 # MAGIC Cada Parquet é lido individualmente antes da união. Essa estratégia
 # MAGIC trata explicitamente possíveis diferenças de tipo entre os meses.
@@ -108,7 +223,7 @@ def read_month_file(taxi_type: str, file_name: str) -> DataFrame:
 
 
 def build_bronze_dataframe(taxi_type: str) -> DataFrame:
-    """Une os cinco meses de um tipo de táxi com schema consistente."""
+    """Une os meses configurados de um tipo de táxi com schema consistente."""
 
     monthly_dataframes = [
         read_month_file(taxi_type, file_name)
