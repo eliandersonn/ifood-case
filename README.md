@@ -17,24 +17,16 @@ consumo SQL.
 
 ## Arquitetura
 
-```text
-NYC TLC Parquet
-      |
-      v
-Landing Volume (arquivos originais)
-      |
-      v
-Bronze Delta (contrato técnico + rastreabilidade)
-      |
-      v
-Silver Delta (qualidade + deduplicação + quarentena)
-      |
-      v
-Gold Delta (agregações do case)
-      |
-      v
-Databricks SQL (consumo e apresentação dos resultados)
-```
+![Fluxo da arquitetura Lakehouse](docs/assets/lakehouse-flow.svg)
+
+| Etapa | Tecnologia | Responsabilidade |
+|---|---|---|
+| Fonte | NYC TLC / Parquet | disponibilizar os arquivos oficiais de Yellow e Green Taxi |
+| Landing | Unity Catalog Volume | preservar os arquivos originais e evitar downloads repetidos |
+| Bronze | Delta Lake | aplicar o contrato técnico e adicionar rastreabilidade |
+| Silver | PySpark / Delta Lake | padronizar, validar, deduplicar e separar a quarentena |
+| Gold | PySpark / Delta Lake | materializar as agregações das perguntas do case |
+| Consumo | Databricks SQL | consultar e validar os resultados com SQL |
 
 Detalhes em [docs/architecture.md](docs/architecture.md) e
 [docs/decisions.md](docs/decisions.md).
@@ -221,3 +213,33 @@ ifood-case/
 O `requirements.txt` registra a versão do PySpark usada no projeto apenas
 para referência e validações locais. A execução oficial deve ser realizada no
 Databricks.
+
+## Ferramentas utilizadas
+
+| Categoria | Ferramenta | Uso no projeto |
+|---|---|---|
+| Plataforma de dados | Databricks Free Edition e compute Serverless | execução dos notebooks, armazenamento e consultas SQL |
+| Linguagens e processamento | Python, SQL e Apache Spark com PySpark | ingestão, transformação, qualidade, agregação e consultas analíticas |
+| Armazenamento | Parquet e Delta Lake | arquivos de origem na Landing e tabelas nas camadas de dados |
+| Governança | Unity Catalog e Volumes | organização dos schemas, tabelas e arquivos da Landing |
+| Desenvolvimento | Visual Studio Code com extensões Python e Databricks | edição local, suporte ao código Python e conexão com o workspace |
+| Assistência à engenharia | OpenAI Codex | apoio à codificação, revisão técnica, testes e documentação; a execução do pipeline permaneceu no Databricks |
+| Versionamento | Git, GitHub, GitHub CLI e Databricks Git folders | histórico do código, publicação e sincronização com o workspace |
+| Documentação | Markdown, HTML, CSS, JavaScript e SVG | README, documentos técnicos, apresentação navegável e diagrama da arquitetura |
+
+## Referências oficiais
+
+- [NYC TLC — Trip Record Data](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
+- [Databricks Free Edition](https://docs.databricks.com/aws/en/getting-started/free-edition)
+- [Databricks — Unity Catalog](https://docs.databricks.com/aws/en/data-governance/unity-catalog)
+- [Databricks — Volumes](https://docs.databricks.com/aws/en/volumes/)
+- [Databricks — Delta Lake](https://docs.databricks.com/aws/en/delta/)
+- [Databricks — Git folders](https://docs.databricks.com/aws/en/repos/git-folders-concepts)
+- [Databricks — extensão para Visual Studio Code](https://docs.databricks.com/aws/en/dev-tools/vscode-ext/)
+- [Apache Spark — documentação do PySpark](https://spark.apache.org/docs/latest/api/python/)
+- [Python — documentação](https://docs.python.org/3/)
+- [Visual Studio Code — documentação](https://code.visualstudio.com/docs)
+- [Git — documentação](https://git-scm.com/doc)
+- [GitHub Docs](https://docs.github.com/)
+- [GitHub CLI — documentação](https://cli.github.com/manual/)
+- [OpenAI Codex — documentação](https://developers.openai.com/codex/)
