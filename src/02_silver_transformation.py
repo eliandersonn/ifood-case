@@ -78,6 +78,11 @@ all_trips_df = yellow_standard_df.unionByName(green_standard_df)
 # MAGIC horários, consistência com o mês de origem e unicidade da corrida.
 # MAGIC Registros reprovados são preservados com os motivos na quarentena.
 # MAGIC
+# MAGIC Uma corrida é enviada para a quarentena quando possui `VendorID`,
+# MAGIC `total_amount`, pickup ou dropoff nulo; `total_amount` não positivo;
+# MAGIC duração não positiva ou superior a 24 horas; ou pickup fora do mês
+# MAGIC declarado pelo arquivo. Uma corrida pode registrar mais de um motivo.
+# MAGIC
 # MAGIC `passenger_count` nulo ou não positivo não invalida a corrida para a
 # MAGIC análise financeira. Esses registros permanecem na Silver e são excluídos
 # MAGIC apenas da métrica de passageiros na Gold.
@@ -194,7 +199,11 @@ print("Tabelas Silver e quarentena publicadas com sucesso.")
 
 # COMMAND ----------
 # MAGIC %md
-# MAGIC ## Validação do contrato e da qualidade
+# MAGIC ## Validação automática do contrato e da reconciliação
+# MAGIC
+# MAGIC A execução falha se o contrato obrigatório estiver incompleto, se as
+# MAGIC tabelas por categoria não fecharem com a tabela unificada ou se a
+# MAGIC reconciliação entre Bronze, duplicidades, Silver e quarentena divergir.
 
 # COMMAND ----------
 
@@ -220,15 +229,48 @@ print(
     + ", ".join(sorted(required_consumption_columns))
 )
 
-spark.sql(
+reconciliation_row = spark.sql(
     f"""
-    SELECT 'silver_valid' AS dataset, COUNT(*) AS row_count
-    FROM {UNIFIED_SILVER_TABLE}
-    UNION ALL
-    SELECT 'quarantine' AS dataset, COUNT(*) AS row_count
-    FROM {QUARANTINE_TABLE}
+    WITH layer_counts AS (
+        SELECT
+            (SELECT COUNT(*) FROM {YELLOW_BRONZE_TABLE})
+                + (SELECT COUNT(*) FROM {GREEN_BRONZE_TABLE})
+                AS bronze_total,
+            (SELECT COUNT(*) FROM {YELLOW_SILVER_TABLE}) AS yellow_valid,
+            (SELECT COUNT(*) FROM {GREEN_SILVER_TABLE}) AS green_valid,
+            (SELECT COUNT(*) FROM {UNIFIED_SILVER_TABLE}) AS silver_valid,
+            (SELECT COUNT(*) FROM {QUARANTINE_TABLE}) AS quarantine
+    )
+    SELECT
+        *,
+        bronze_total - silver_valid - quarantine AS duplicates_removed
+    FROM layer_counts
     """
-).show()
+).first()
+
+if reconciliation_row.yellow_valid + reconciliation_row.green_valid != (
+    reconciliation_row.silver_valid
+):
+    raise AssertionError(
+        "Reconciliação inválida: Yellow + Green difere da Silver unificada."
+    )
+
+if reconciliation_row.duplicates_removed < 0:
+    raise AssertionError(
+        "Reconciliação inválida: as saídas superam o volume da Bronze."
+    )
+
+if reconciliation_row.bronze_total != (
+    reconciliation_row.silver_valid
+    + reconciliation_row.quarantine
+    + reconciliation_row.duplicates_removed
+):
+    raise AssertionError(
+        "Reconciliação inválida entre Bronze, Silver e quarentena."
+    )
+
+print("Reconciliação automática validada com sucesso.")
+spark.createDataFrame([reconciliation_row]).show(truncate=False)
 
 (
     spark.read.table(QUARANTINE_TABLE)

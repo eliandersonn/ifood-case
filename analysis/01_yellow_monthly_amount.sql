@@ -1,9 +1,11 @@
 -- Databricks notebook source
 -- MAGIC %md
--- MAGIC # Pergunta 1 — Média mensal de total_amount
+-- MAGIC # Pergunta 1 — Valor total médio por corrida Yellow em cada mês
 -- MAGIC
--- MAGIC Calcula o ticket médio por corrida para cada mês usando os Yellow
--- MAGIC Taxis aprovados na Silver. Soma e quantidade são informações auxiliares.
+-- MAGIC Calcula a média de `total_amount` entre as corridas Yellow válidas
+-- MAGIC iniciadas em cada mês. A métrica representa o valor total médio por
+-- MAGIC corrida, não o gasto médio por passageiro. Soma mensal e quantidade de
+-- MAGIC corridas são informações auxiliares.
 
 -- COMMAND ----------
 

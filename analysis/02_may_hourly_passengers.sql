@@ -1,9 +1,10 @@
 -- Databricks notebook source
 -- MAGIC %md
--- MAGIC # Pergunta 2 — Média de passageiros por hora em maio
+-- MAGIC # Pergunta 2 — Passageiros por corrida e hora de início em maio
 -- MAGIC
--- MAGIC Considera Yellow e Green Taxi por meio da tabela unificada. A hora é
--- MAGIC extraída do pickup, momento em que o passageiro iniciou a corrida.
+-- MAGIC Calcula a quantidade média de passageiros por corrida Yellow ou Green,
+-- MAGIC agrupada pela hora em que a corrida começou durante maio. Somente
+-- MAGIC corridas com `passenger_count` positivo participam da média.
 
 -- COMMAND ----------
 

@@ -65,3 +65,43 @@ UNION ALL
 
 SELECT 'quarantine' AS dataset, COUNT(*) AS row_count
 FROM workspace.nyc_taxi_silver.taxi_trips_quarantine;
+
+-- COMMAND ----------
+
+-- Scorecard consolidado da execução.
+-- As taxas usam como base os registros após a remoção de duplicidades.
+WITH layer_counts AS (
+    SELECT
+        (SELECT COUNT(*)
+         FROM workspace.nyc_taxi_bronze.yellow_taxi_trips_raw)
+        +
+        (SELECT COUNT(*)
+         FROM workspace.nyc_taxi_bronze.green_taxi_trips_raw)
+            AS bronze_total,
+        (SELECT COUNT(*)
+         FROM workspace.nyc_taxi_silver.taxi_trips_unified)
+            AS silver_valid,
+        (SELECT COUNT(*)
+         FROM workspace.nyc_taxi_silver.taxi_trips_quarantine)
+            AS quarantine
+), reconciled AS (
+    SELECT
+        *,
+        bronze_total - silver_valid - quarantine AS duplicates_removed,
+        silver_valid + quarantine AS rows_after_deduplication
+    FROM layer_counts
+)
+SELECT
+    bronze_total,
+    duplicates_removed,
+    silver_valid,
+    quarantine,
+    ROUND(
+        100.0 * silver_valid / rows_after_deduplication,
+        2
+    ) AS silver_acceptance_rate_pct,
+    ROUND(
+        100.0 * quarantine / rows_after_deduplication,
+        2
+    ) AS quarantine_rate_pct
+FROM reconciled;

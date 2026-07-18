@@ -58,8 +58,33 @@ Registros reprovados são preservados com um ou mais motivos na tabela de
 quarentena. `passenger_count` nulo ou não positivo não invalida a corrida para
 a análise financeira; ele é excluído somente da métrica de passageiros.
 
+Os códigos de quarentena refletem condições objetivas:
+
+| Código | Condição |
+|---|---|
+| `null_vendor_id` | `VendorID` nulo |
+| `null_total_amount` | `total_amount` nulo |
+| `non_positive_total_amount` | `total_amount` menor ou igual a zero |
+| `null_pickup_datetime` | início da corrida nulo |
+| `null_dropoff_datetime` | término da corrida nulo |
+| `non_positive_trip_duration` | término anterior ou igual ao início |
+| `trip_duration_over_24h` | duração superior a 24 horas |
+| `pickup_outside_source_month` | início fora do mês declarado pelo arquivo |
+
+Uma corrida pode registrar mais de um código. Duplicidades são removidas por
+um controle próprio e não são enviadas para quarentena.
+
 Essas regras são verificadas durante a execução dos notebooks e resumidas em
 `analysis/00_data_quality_overview.sql`.
+
+### Quality gates
+
+Os controles críticos não são apenas exibidos. A execução é interrompida
+quando o contrato Yellow está incompleto, quando as tabelas Yellow e Green não
+fecham com a Silver unificada, quando as saídas superam a Bronze ou quando a
+Gold não cobre todos os meses disponíveis e as 24 horas esperadas. O objetivo
+é impedir que um resultado estruturalmente incompleto seja apresentado como
+sucesso.
 
 ## Evolução para produção
 
