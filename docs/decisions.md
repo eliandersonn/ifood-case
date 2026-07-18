@@ -1,5 +1,16 @@
 # Decisões Técnicas
 
+## Por que Databricks Free Edition?
+
+O case recomenda a Community Edition, que era a oferta gratuita disponível
+quando o enunciado foi elaborado. A Free Edition é a substituta atual. Ela foi
+usada com Serverless, Unity Catalog e Volumes para representar uma arquitetura
+Lakehouse governada e reproduzível sem exigir uma conta de nuvem externa.
+
+O Unity Catalog centraliza os metadados das tabelas e governa a Landing. Essa
+escolha aproxima o case de um ambiente corporativo atual, mas mantém a execução
+simples para quem clonar o repositório.
+
 ## Por que Yellow e Green Taxi?
 
 A primeira pergunta exige Yellow Taxi. A segunda pede todos os táxis da frota; por isso, o pipeline processa Yellow e Green Taxi. FHV e HVFHV não são incluídos, pois representam veículos de aluguel, não as duas categorias de táxi reguladas pela TLC.
@@ -31,4 +42,31 @@ Delta oferece schema enforcement, escrita transacional e tabelas consultáveis e
 
 ## Regras de qualidade
 
-Na Silver, registros devem ter horários válidos, duração positiva e estar dentro do período processado. Valores não positivos de `total_amount` e contagens de passageiros não positivas serão tratados explicitamente e reportados nas validações. A decisão final de manter ou excluir cada caso será documentada junto às métricas observadas, para não esconder impacto analítico.
+Os controles seguem dimensões usuais de qualidade sem adicionar ferramentas
+desnecessárias ao escopo do case:
+
+- **conformidade:** presença das colunas obrigatórias e tipos explícitos;
+- **completude:** `VendorID`, `total_amount`, pickup e dropoff obrigatórios;
+- **validade:** `total_amount` positivo e duração maior que zero e de no
+  máximo 24 horas;
+- **consistência:** pickup dentro do mês indicado pelo arquivo de origem;
+- **unicidade:** deduplicação pelos principais atributos da corrida;
+- **rastreabilidade:** arquivo, mês de origem e instante de ingestão;
+- **reconciliação:** contagens por arquivo, mês, camada e regra de rejeição.
+
+Registros reprovados são preservados com um ou mais motivos na tabela de
+quarentena. `passenger_count` nulo ou não positivo não invalida a corrida para
+a análise financeira; ele é excluído somente da métrica de passageiros.
+
+Essas regras são verificadas durante a execução dos notebooks e resumidas em
+`analysis/00_data_quality_overview.sql`.
+
+## Evolução para produção
+
+O `overwrite` foi escolhido para o recorte fixo de cinco meses por ser simples,
+idempotente e fácil de reproduzir. Para vários anos de histórico, o pipeline
+processaria somente meses novos ou alterados: `replaceWhere` para substituir
+partições completas e `MERGE INTO` quando fosse necessário atualizar registros
+específicos. A Gold seria recalculada apenas para os meses afetados.
+
+As partições e a coluna `source_month` já preparam o modelo para essa evolução.

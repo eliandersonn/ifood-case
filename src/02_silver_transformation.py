@@ -74,6 +74,10 @@ all_trips_df = yellow_standard_df.unionByName(green_standard_df)
 # MAGIC %md
 # MAGIC ## Qualidade e deduplicação
 # MAGIC
+# MAGIC São avaliadas completude dos campos essenciais, validade dos valores e
+# MAGIC horários, consistência com o mês de origem e unicidade da corrida.
+# MAGIC Registros reprovados são preservados com os motivos na quarentena.
+# MAGIC
 # MAGIC `passenger_count` nulo ou não positivo não invalida a corrida para a
 # MAGIC análise financeira. Esses registros permanecem na Silver e são excluídos
 # MAGIC apenas da métrica de passageiros na Gold.
@@ -210,6 +214,11 @@ if missing_contract_columns:
     raise AssertionError(
         f"Contrato de consumo incompleto: {missing_contract_columns}"
     )
+
+print(
+    "Contrato Yellow validado: "
+    + ", ".join(sorted(required_consumption_columns))
+)
 
 spark.sql(
     f"""

@@ -9,6 +9,14 @@
 
 Essa escolha entrega armazenamento governado, tabelas transacionais e consumo por SQL sem introduzir infraestrutura de nuvem adicional para o case.
 
+O enunciado recomenda a antiga Community Edition. A Databricks Free Edition
+é sua substituta atual e mantém a proposta de uso gratuito, acrescentando
+compute Serverless e recursos modernos da plataforma. O Unity Catalog foi
+adotado para centralizar metadados e governar tanto as tabelas quanto os
+arquivos da Landing por meio de um Volume gerenciado. Para este case, isso
+simula uma prática corporativa sem exigir configuração de S3 ou credenciais de
+nuvem.
+
 ## Camadas
 
 | Camada | Objeto | Responsabilidade |
@@ -45,6 +53,17 @@ A tabela Yellow mantém o contrato `tpep_*` exigido pelo case. A tabela unificad
 - `workspace.nyc_taxi_gold.yellow_monthly_avg_total_amount`
 - `workspace.nyc_taxi_gold.all_taxis_may_hourly_avg_passenger_count`
 
-## Reprocessamento
+## Evolução para produção
 
 O recorte do case é fixo e pequeno para Spark, portanto o pipeline usa full refresh com `overwrite`. Essa estratégia é simples e idempotente: uma nova execução substitui as tabelas sem duplicar registros. Na Landing, arquivos existentes são ignorados e somente meses novos são baixados. A coluna `source_month` e o particionamento mensal deixam explícita a evolução para `replaceWhere` ou `MERGE` em cargas incrementais de produção.
+
+Para um histórico de vários anos, a evolução seria incremental:
+
+1. identificar somente os meses novos ou alterados;
+2. escrever Bronze e Silver com `replaceWhere` por `source_month` ou usar
+   `MERGE INTO` quando houver atualização de registros;
+3. recalcular na Gold apenas as partições mensais afetadas;
+4. orquestrar as etapas em um Job com alertas de falha, volumetria e qualidade.
+
+O desenho atual preserva `source_month`, metadados de origem e partições para
+permitir essa evolução sem remodelar as tabelas.
