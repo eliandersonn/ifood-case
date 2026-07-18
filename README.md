@@ -35,7 +35,7 @@ Detalhes em [docs/architecture.md](docs/architecture.md) e
 
 - uma conta no Databricks Free Edition;
 - acesso a este repositório no GitHub;
-- acesso à internet no workspace para baixar os arquivos da NYC TLC;
+- acesso de saída do workspace ao endpoint público da NYC TLC;
 - compute Serverless disponível.
 
 Não é necessário instalar Python, PySpark ou Databricks Connect para executar
@@ -73,9 +73,11 @@ Execute exatamente nesta ordem:
 3. `src/02_silver_transformation.py`
    - padroniza Yellow e Green Taxi;
    - aplica qualidade e deduplicação;
-   - publica Silver e quarentena.
+   - publica Silver e quarentena;
+   - valida contrato e reconciliação entre as camadas.
 4. `src/03_gold_analytics.py`
-   - calcula e publica as duas respostas analíticas.
+   - calcula e publica as duas respostas analíticas;
+   - valida a cobertura dos meses e das 24 horas esperadas.
 
 O notebook Bronze possui os parâmetros:
 
@@ -87,6 +89,15 @@ O notebook Bronze possui os parâmetros:
 Para reproduzir o case, mantenha os valores padrão. Para acrescentar junho,
 por exemplo, altere apenas `end_month` para `2023-06`.
 
+> **Observação sobre o ambiente gratuito:** o Databricks Free Edition limita o
+> acesso de saída a um conjunto de domínios confiáveis. Por isso, alguns
+> workspaces gratuitos podem apresentar `Temporary failure in name resolution`
+> ao acessar a NYC TLC, mesmo com o código correto. Essa é uma restrição do
+> ambiente de avaliação gratuito, não uma falha da lógica de ingestão. Em um
+> workspace Enterprise, o acesso ao endpoint deve ser permitido pela política
+> de rede administrada pela organização. Consulte as
+> [limitações oficiais do Free Edition](https://docs.databricks.com/aws/en/getting-started/free-edition-limitations).
+
 ### 3. Validar a execução
 
 Ao final dos notebooks, confirme no **Catalog** a existência dos schemas:
@@ -97,10 +108,10 @@ workspace.nyc_taxi_silver
 workspace.nyc_taxi_gold
 ```
 
-O notebook Silver valida automaticamente o contrato da tabela Yellow após a
-publicação e interrompe a execução se qualquer coluna obrigatória estiver
-ausente: `VendorID`, `passenger_count`, `total_amount`,
-`tpep_pickup_datetime` ou `tpep_dropoff_datetime`.
+O notebook Silver interrompe a execução se o contrato obrigatório estiver
+incompleto ou se os volumes de Yellow, Green, Silver unificada, quarentena e
+duplicidades não fecharem com a Bronze. O notebook Gold também falha se não
+publicar todos os meses disponíveis ou as 24 horas esperadas para maio.
 
 Para o recorte original do case, as principais volumetrias esperadas são:
 
@@ -119,11 +130,26 @@ métricas, pois a fonte oficial pode publicar uma nova versão dos arquivos.
 Execute os arquivos da pasta `analysis/`:
 
 1. `00_data_quality_overview.sql` — perfil e qualidade dos dados;
-2. `01_yellow_monthly_amount.sql` — média mensal de `total_amount`;
-3. `02_may_hourly_passengers.sql` — média de passageiros por hora em maio.
+2. `01_yellow_monthly_amount.sql` — valor médio de `total_amount` por corrida
+   Yellow, agrupado pelo mês de início da corrida;
+3. `02_may_hourly_passengers.sql` — quantidade média de passageiros por
+   corrida Yellow ou Green iniciada em cada hora do dia, durante maio;
+4. `03_executive_insights.sql` — variação mensal, rankings de volume e
+   ocupação e participação de Yellow e Green na Silver válida.
 
-Os dois SQLs de negócio calculam as respostas diretamente a partir da Silver.
-As tabelas Gold materializam os mesmos resultados para consumo recorrente.
+Os SQLs `01` e `02` calculam as respostas diretamente a partir da Silver. As
+tabelas Gold materializam os mesmos resultados para consumo recorrente, e o
+SQL `03` demonstra como consumidores podem relacionar essas métricas sem criar
+uma nova camada.
+
+### Definição das métricas
+
+| Campo | Definição |
+|---|---|
+| `avg_total_amount` | média de `total_amount` entre as corridas Yellow válidas iniciadas em cada mês; representa valor total médio por corrida, não gasto médio por passageiro |
+| `sum_total_amount` | soma de `total_amount` das corridas Yellow válidas do mês; informação complementar à média solicitada |
+| `avg_passenger_count` | média de `passenger_count` entre as corridas Yellow e Green válidas, com contagem positiva, iniciadas em cada hora de maio; unidade: passageiros por corrida |
+| `trip_count` | quantidade de corridas que participou do cálculo na linha correspondente |
 
 ## Qualidade dos dados
 
@@ -145,6 +171,27 @@ Esses registros permanecem na Silver, mas são excluídos da métrica de média 
 passageiros. A análise exploratória identificou essas ocorrências como dados
 inadequados para representar indivíduos transportados; incluí-las reduziria a
 média artificialmente.
+
+### Regras de quarentena
+
+Uma corrida é enviada para
+`workspace.nyc_taxi_silver.taxi_trips_quarantine` quando viola pelo menos uma
+das regras abaixo. A coluna `dq_failures` preserva todos os motivos encontrados.
+
+| Código | Condição que reprova a corrida | Ocorrências observadas |
+|---|---|---:|
+| `null_vendor_id` | `VendorID` nulo | 0 |
+| `null_total_amount` | `total_amount` nulo | 0 |
+| `non_positive_total_amount` | `total_amount` menor ou igual a zero | 145.444 |
+| `null_pickup_datetime` | data e hora de início nula | 0 |
+| `null_dropoff_datetime` | data e hora de término nula | 0 |
+| `non_positive_trip_duration` | término anterior ou igual ao início | 6.596 |
+| `trip_duration_over_24h` | duração superior a 24 horas | 94 |
+| `pickup_outside_source_month` | início da corrida fora do mês declarado pelo arquivo | 485 |
+
+As ocorrências somam mais que os 152.239 registros em quarentena porque uma
+mesma corrida pode violar mais de uma regra. As 138 duplicidades são removidas
+separadamente e não são classificadas como quarentena.
 
 ## Idempotência e novos meses
 
@@ -182,9 +229,13 @@ apontam para o endpoint CloudFront usado pelo pipeline.
 - 16.526.016 corridas processadas na Bronze;
 - 16.373.639 corridas válidas na Silver;
 - 152.239 registros preservados na quarentena;
-- média mensal de `total_amount` dos Yellow Taxis de 27,45 em janeiro e 29,46
-  em maio;
-- média horária de passageiros em maio entre 1,26 e 1,45.
+- valor total médio por corrida Yellow de 27,45 em janeiro e 29,46 em maio;
+- quantidade média de passageiros por corrida Yellow ou Green, agrupada pela
+  hora de início em maio, entre 1,26 e 1,45;
+- entre janeiro e maio, aumento de 7,3% no valor médio por corrida, 14,5% no
+  volume de corridas válidas e 22,9% na soma de `total_amount` Yellow;
+- Yellow representa 97,94% das corridas válidas e influencia majoritariamente
+  a métrica combinada com Green.
 
 Resultados completos: [docs/results.md](docs/results.md).
 
@@ -202,7 +253,8 @@ ifood-case/
 ├── analysis/
 │   ├── 00_data_quality_overview.sql
 │   ├── 01_yellow_monthly_amount.sql
-│   └── 02_may_hourly_passengers.sql
+│   ├── 02_may_hourly_passengers.sql
+│   └── 03_executive_insights.sql
 ├── docs/
 ├── README.md
 └── requirements.txt

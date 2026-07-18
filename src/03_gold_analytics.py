@@ -27,9 +27,10 @@ MAY_PASSENGERS_TABLE = (
 # MAGIC %md
 # MAGIC ## Pergunta 1
 # MAGIC
-# MAGIC Qual a média de `total_amount` recebida em cada mês, considerando todos
-# MAGIC os Yellow Taxis? A soma mensal é mantida como informação complementar
-# MAGIC para eliminar a ambiguidade entre ticket médio e receita total.
+# MAGIC Calcula a média de `total_amount` entre as corridas Yellow válidas
+# MAGIC iniciadas em cada mês. O resultado representa o valor total médio por
+# MAGIC corrida, não o gasto médio por passageiro. A soma mensal é mantida como
+# MAGIC informação complementar para diferenciar média e valor total do mês.
 
 # COMMAND ----------
 
@@ -62,9 +63,10 @@ display(monthly_amount_df)
 # MAGIC %md
 # MAGIC ## Pergunta 2
 # MAGIC
-# MAGIC Qual a média de `passenger_count` por hora do dia em maio, considerando
-# MAGIC Yellow e Green Taxi? Valores nulos, zero ou negativos são excluídos
-# MAGIC somente desta métrica para não distorcer a média de passageiros.
+# MAGIC Calcula a quantidade média de passageiros por corrida Yellow ou Green,
+# MAGIC agrupada pela hora de início da corrida durante maio. Valores nulos,
+# MAGIC zero ou negativos são excluídos somente desta métrica para não reduzir
+# MAGIC artificialmente a média de passageiros por corrida.
 
 # COMMAND ----------
 
@@ -98,22 +100,61 @@ display(may_passengers_df)
 
 # COMMAND ----------
 # MAGIC %md
-# MAGIC ## Validação das tabelas Gold
+# MAGIC ## Validação automática das tabelas Gold
+# MAGIC
+# MAGIC A primeira resposta deve conter todos os meses disponíveis na Silver e
+# MAGIC a segunda deve cobrir as 24 horas do dia. A execução falha quando essa
+# MAGIC cardinalidade não é atendida.
 
 # COMMAND ----------
 
-spark.sql(
+monthly_result_df = spark.sql(
     f"""
     SELECT *
     FROM {MONTHLY_AMOUNT_TABLE}
     ORDER BY pickup_month
     """
-).show(5, truncate=False)
+)
 
-spark.sql(
+hourly_result_df = spark.sql(
     f"""
     SELECT *
     FROM {MAY_PASSENGERS_TABLE}
     ORDER BY pickup_hour
     """
-).show(24, truncate=False)
+)
+
+expected_months = {
+    row.source_month
+    for row in yellow_silver_df.select("source_month").distinct().collect()
+}
+published_months = {
+    row.pickup_month
+    for row in monthly_result_df.select("pickup_month").collect()
+}
+expected_hours = set(range(24))
+published_hours = {
+    row.pickup_hour
+    for row in hourly_result_df.select("pickup_hour").collect()
+}
+
+if published_months != expected_months:
+    raise AssertionError(
+        "Meses inesperados na Gold: "
+        f"esperado={sorted(expected_months)}, "
+        f"publicado={sorted(published_months)}"
+    )
+
+if published_hours != expected_hours:
+    raise AssertionError(
+        "Horas inesperadas na Gold: "
+        f"esperado={sorted(expected_hours)}, "
+        f"publicado={sorted(published_hours)}"
+    )
+
+print(
+    "Cardinalidade Gold validada: "
+    f"{len(expected_months)} meses e 24 horas."
+)
+monthly_result_df.show(5, truncate=False)
+hourly_result_df.show(24, truncate=False)

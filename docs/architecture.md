@@ -26,6 +26,41 @@ nuvem.
 | Silver | tabelas Delta limpas | Aplicar regras de qualidade e disponibilizar dados estruturados. |
 | Gold | tabelas Delta agregadas | Materializar respostas analíticas prontas para SQL. |
 
+## Granularidade dos objetos
+
+| Objeto | Granularidade | Consumidor principal |
+|---|---|---|
+| Parquet na Landing | um arquivo original por categoria e mês | reprocessamento e auditoria |
+| tabela Bronze | uma linha por registro publicado pela NYC TLC | transformação Silver |
+| Silver por categoria | uma corrida válida e deduplicada | usuários SQL e análises específicas |
+| Silver unificada | uma corrida válida Yellow ou Green | análises combinadas |
+| Quarentena | uma corrida reprovada, com um ou mais motivos | acompanhamento de qualidade |
+| Gold mensal Yellow | um mês de início da corrida | análise de valor médio e volume |
+| Gold horária de maio | uma hora do dia, de 0 a 23 | análise de passageiros por corrida |
+
+Essa definição evita interpretar uma linha Gold como uma corrida individual e
+deixa explícita a unidade de cada métrica disponibilizada para consumo.
+
+## Evidências de governança
+
+Como as transformações leem e escrevem tabelas registradas no Unity Catalog,
+o Databricks captura a linhagem entre Bronze, Silver e Gold. Após a execução,
+ela pode ser consultada em **Catalog > tabela Gold > Lineage** e usada como
+evidência visual na apresentação.
+
+O histórico transacional de qualquer tabela Delta também pode ser auditado:
+
+```sql
+DESCRIBE HISTORY
+workspace.nyc_taxi_gold.yellow_monthly_avg_total_amount;
+```
+
+Esses recursos comprovam origem, consumidores e reexecuções sem acrescentar
+uma ferramenta externa ao escopo do case.
+
+Referências: [Unity Catalog lineage](https://docs.databricks.com/aws/en/data-governance/unity-catalog/data-lineage) e
+[Delta table history](https://docs.databricks.com/aws/en/tables/history).
+
 ## Modelo físico proposto
 
 ### Bronze

@@ -121,7 +121,10 @@ def download_to_landing(file_name: str) -> dict:
                 os.remove(temporary_destination)
             if attempt == DOWNLOAD_RETRIES:
                 raise RuntimeError(
-                    f'Falha ao baixar {file_name} após {attempt} tentativas.'
+                    f'Falha ao baixar {file_name} após {attempt} tentativas. '
+                    'O Databricks Free Edition pode restringir o acesso de '
+                    'saída ao endpoint da NYC TLC; consulte a observação de '
+                    'ambiente no README.'
                 ) from error
             time.sleep(2**attempt)
 
