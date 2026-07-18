@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="900" viewBox="0 0 1800 900" role="img" aria-labelledby="title description">
+  <title id="title">Fluxo do NYC Taxi Data Pipeline</title>
+  <desc id="description">Fluxo da fonte NYC TLC pelas camadas Landing, Bronze, Silver e Gold até o consumo com Databricks SQL.</desc>
+
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#31151a" flood-opacity="0.10"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#6f5b60"/>
+    </marker>
+    <linearGradient id="header" x1="0" x2="1">
+      <stop offset="0" stop-color="#ea1d2c"/>
+      <stop offset="1" stop-color="#b81524"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1800" height="900" fill="#fbf8f7"/>
+  <rect width="1800" height="16" fill="url(#header)"/>
+
+  <g font-family="Inter, Segoe UI, Arial, sans-serif">
+    <text x="80" y="76" font-size="24" font-weight="800" fill="#ea1d2c">iFood Case</text>
+    <text x="80" y="132" font-size="42" font-weight="800" fill="#2d2023">NYC Taxi Data Pipeline</text>
+    <text x="80" y="170" font-size="20" fill="#725f64">Arquitetura Lakehouse no Databricks · Janeiro a Maio de 2023</text>
+
+    <!-- Lakehouse boundary -->
+    <rect x="350" y="220" width="1100" height="520" rx="30" fill="#ffffff" stroke="#eadbdd" stroke-width="2" stroke-dasharray="9 9"/>
+    <rect x="390" y="196" width="330" height="48" rx="24" fill="#2d2023"/>
+    <text x="555" y="227" font-size="18" font-weight="700" text-anchor="middle" fill="#ffffff">ARQUITETURA LAKEHOUSE</text>
+
+    <!-- Source -->
+    <g filter="url(#shadow)">
+      <rect x="55" y="340" width="250" height="270" rx="24" fill="#fae9f5" stroke="#a7448d" stroke-width="3"/>
+    </g>
+    <circle cx="180" cy="390" r="28" fill="#a7448d"/>
+    <text x="180" y="399" font-size="24" font-weight="800" text-anchor="middle" fill="#ffffff">01</text>
+    <text x="180" y="452" font-size="24" font-weight="800" text-anchor="middle" fill="#522044">NYC TLC</text>
+    <text x="180" y="481" font-size="17" font-weight="700" text-anchor="middle" fill="#522044">PUBLIC DATA</text>
+    <line x1="90" y1="508" x2="270" y2="508" stroke="#d8a9cc"/>
+    <text x="180" y="544" font-size="16" text-anchor="middle" fill="#5e4c58">Arquivos Parquet</text>
+    <text x="180" y="570" font-size="16" font-weight="700" text-anchor="middle" fill="#5e4c58">oficiais</text>
+
+    <!-- Landing -->
+    <g filter="url(#shadow)">
+      <rect x="390" y="300" width="230" height="350" rx="24" fill="#ffe8e8" stroke="#ea1d2c" stroke-width="3"/>
+    </g>
+    <rect x="416" y="326" width="88" height="32" rx="16" fill="#ea1d2c"/>
+    <text x="460" y="348" font-size="14" font-weight="800" text-anchor="middle" fill="#ffffff">LANDING</text>
+    <circle cx="570" cy="342" r="21" fill="#ffffff" stroke="#ea1d2c" stroke-width="2"/>
+    <text x="570" y="349" font-size="17" font-weight="800" text-anchor="middle" fill="#ea1d2c">02</text>
+    <text x="505" y="410" font-size="23" font-weight="800" text-anchor="middle" fill="#651020">Volume</text>
+    <text x="505" y="439" font-size="23" font-weight="800" text-anchor="middle" fill="#651020">Gerenciado</text>
+    <line x1="420" y1="468" x2="590" y2="468" stroke="#f3b7bd"/>
+    <text x="420" y="511" font-size="16" fill="#651020">• Preserva os Parquets</text>
+    <text x="436" y="536" font-size="16" fill="#651020">originais</text>
+    <text x="420" y="576" font-size="16" fill="#651020">• Download idempotente</text>
+    <text x="420" y="615" font-size="14" fill="#9b5962">Unity Catalog Volume</text>
+
+    <!-- Bronze -->
+    <g filter="url(#shadow)">
+      <rect x="655" y="300" width="230" height="350" rx="24" fill="#eaf8ef" stroke="#167a45" stroke-width="3"/>
+    </g>
+    <rect x="681" y="326" width="82" height="32" rx="16" fill="#167a45"/>
+    <text x="722" y="348" font-size="14" font-weight="800" text-anchor="middle" fill="#ffffff">BRONZE</text>
+    <circle cx="835" cy="342" r="21" fill="#ffffff" stroke="#167a45" stroke-width="2"/>
+    <text x="835" y="349" font-size="17" font-weight="800" text-anchor="middle" fill="#167a45">03</text>
+    <text x="770" y="410" font-size="23" font-weight="800" text-anchor="middle" fill="#115c33">Tabelas Delta</text>
+    <text x="770" y="439" font-size="23" font-weight="800" text-anchor="middle" fill="#115c33">Raw</text>
+    <line x1="685" y1="468" x2="855" y2="468" stroke="#addbc1"/>
+    <text x="685" y="511" font-size="16" fill="#115c33">• Conversão explícita</text>
+    <text x="701" y="536" font-size="16" fill="#115c33">dos tipos</text>
+    <text x="685" y="576" font-size="16" fill="#115c33">• Metadados de origem</text>
+    <text x="685" y="615" font-size="14" fill="#4f8569">Delta + source metadata</text>
+
+    <!-- Silver -->
+    <g filter="url(#shadow)">
+      <rect x="920" y="300" width="230" height="350" rx="24" fill="#eaf8ef" stroke="#167a45" stroke-width="3"/>
+    </g>
+    <rect x="946" y="326" width="76" height="32" rx="16" fill="#167a45"/>
+    <text x="984" y="348" font-size="14" font-weight="800" text-anchor="middle" fill="#ffffff">SILVER</text>
+    <circle cx="1100" cy="342" r="21" fill="#ffffff" stroke="#167a45" stroke-width="2"/>
+    <text x="1100" y="349" font-size="17" font-weight="800" text-anchor="middle" fill="#167a45">04</text>
+    <text x="1035" y="410" font-size="23" font-weight="800" text-anchor="middle" fill="#115c33">Tabelas Delta</text>
+    <text x="1035" y="439" font-size="23" font-weight="800" text-anchor="middle" fill="#115c33">Cleaned</text>
+    <line x1="950" y1="468" x2="1120" y2="468" stroke="#addbc1"/>
+    <text x="950" y="506" font-size="16" fill="#115c33">• Limpeza e deduplicação</text>
+    <text x="950" y="540" font-size="16" fill="#115c33">• Regras de qualidade</text>
+    <text x="950" y="574" font-size="16" fill="#115c33">• Quarentena auditável</text>
+    <text x="950" y="615" font-size="14" fill="#4f8569">Contrato de consumo</text>
+
+    <!-- Gold -->
+    <g filter="url(#shadow)">
+      <rect x="1185" y="300" width="230" height="350" rx="24" fill="#fff3cd" stroke="#d4a900" stroke-width="3"/>
+    </g>
+    <rect x="1211" y="326" width="66" height="32" rx="16" fill="#d4a900"/>
+    <text x="1244" y="348" font-size="14" font-weight="800" text-anchor="middle" fill="#ffffff">GOLD</text>
+    <circle cx="1365" cy="342" r="21" fill="#ffffff" stroke="#d4a900" stroke-width="2"/>
+    <text x="1365" y="349" font-size="17" font-weight="800" text-anchor="middle" fill="#9a7800">05</text>
+    <text x="1300" y="410" font-size="23" font-weight="800" text-anchor="middle" fill="#856404">Tabelas Delta</text>
+    <text x="1300" y="439" font-size="23" font-weight="800" text-anchor="middle" fill="#856404">Business</text>
+    <line x1="1215" y1="468" x2="1385" y2="468" stroke="#ead68e"/>
+    <text x="1215" y="511" font-size="16" fill="#856404">• Agregações prontas</text>
+    <text x="1215" y="551" font-size="16" fill="#856404">• Respostas às perguntas</text>
+    <text x="1231" y="576" font-size="16" fill="#856404">do case</text>
+    <text x="1215" y="615" font-size="14" fill="#9d8741">Métricas de negócio</text>
+
+    <!-- Consumption -->
+    <g filter="url(#shadow)">
+      <rect x="1495" y="340" width="250" height="270" rx="24" fill="#fae9f5" stroke="#a7448d" stroke-width="3"/>
+    </g>
+    <circle cx="1620" cy="390" r="28" fill="#a7448d"/>
+    <text x="1620" y="399" font-size="24" font-weight="800" text-anchor="middle" fill="#ffffff">06</text>
+    <text x="1620" y="452" font-size="24" font-weight="800" text-anchor="middle" fill="#522044">DATABRICKS</text>
+    <text x="1620" y="481" font-size="17" font-weight="700" text-anchor="middle" fill="#522044">SQL / ANALYTICS</text>
+    <line x1="1530" y1="508" x2="1710" y2="508" stroke="#d8a9cc"/>
+    <text x="1620" y="544" font-size="16" text-anchor="middle" fill="#5e4c58">Consumo final</text>
+    <text x="1620" y="574" font-size="16" font-weight="700" text-anchor="middle" fill="#5e4c58">e análises</text>
+
+    <!-- Flow arrows -->
+    <path d="M305 475 H380" fill="none" stroke="#6f5b60" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="277" y="421" width="130" height="30" rx="15" fill="#ffffff" stroke="#eadbdd"/>
+    <text x="342" y="442" font-size="11" font-weight="700" text-anchor="middle" fill="#725f64">Ingestão via urllib</text>
+
+    <path d="M620 475 H645" fill="none" stroke="#6f5b60" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="633" y="445" font-size="11" font-weight="700" text-anchor="middle" fill="#725f64">Spark</text>
+
+    <path d="M885 475 H910" fill="none" stroke="#6f5b60" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="898" y="445" font-size="11" font-weight="700" text-anchor="middle" fill="#725f64">DQ</text>
+
+    <path d="M1150 475 H1175" fill="none" stroke="#6f5b60" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="1163" y="445" font-size="11" font-weight="700" text-anchor="middle" fill="#725f64">AVG</text>
+
+    <path d="M1415 475 H1485" fill="none" stroke="#6f5b60" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="1400" y="421" width="102" height="30" rx="15" fill="#ffffff" stroke="#eadbdd"/>
+    <text x="1451" y="442" font-size="11" font-weight="700" text-anchor="middle" fill="#725f64">Consultas SQL</text>
+
+    <!-- Transformation details -->
+    <text x="637" y="700" font-size="13" font-weight="700" text-anchor="middle" fill="#725f64">Spark Read + Schema Enforcement</text>
+    <text x="902" y="700" font-size="13" font-weight="700" text-anchor="middle" fill="#725f64">Qualidade + União</text>
+    <text x="1167" y="700" font-size="13" font-weight="700" text-anchor="middle" fill="#725f64">Agrupamentos + Médias</text>
+
+    <!-- Footer -->
+    <line x1="80" y1="798" x2="1720" y2="798" stroke="#eadbdd" stroke-width="2"/>
+    <text x="80" y="842" font-size="16" font-weight="700" fill="#2d2023">Princípios:</text>
+    <text x="166" y="842" font-size="16" fill="#725f64">arquivos originais preservados · processamento idempotente · qualidade observável · consumo governado</text>
+    <text x="1720" y="842" font-size="15" text-anchor="end" fill="#ea1d2c">Apache Spark + Delta Lake + Unity Catalog</text>
+  </g>
+</svg>
