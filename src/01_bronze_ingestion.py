@@ -148,7 +148,8 @@ for result in download_results:
 # MAGIC ## Validação da Landing Zone
 # MAGIC
 # MAGIC A execução é interrompida quando algum arquivo do período configurado
-# MAGIC não está disponível. Isso evita publicar uma tabela Bronze parcial.
+# MAGIC não está disponível. Esse controle de completude evita publicar uma
+# MAGIC tabela Bronze parcial.
 
 # COMMAND ----------
 
@@ -180,7 +181,9 @@ print(f"Arquivos adicionais ignorados: {unexpected_files}")
 # MAGIC ## Landing → Bronze
 # MAGIC
 # MAGIC Cada Parquet é lido individualmente antes da união. Essa estratégia
-# MAGIC trata explicitamente possíveis diferenças de tipo entre os meses.
+# MAGIC aplica conformidade de schema e trata explicitamente possíveis
+# MAGIC diferenças de tipo entre os meses. Arquivo, mês e instante de ingestão
+# MAGIC garantem a rastreabilidade.
 
 # COMMAND ----------
 
@@ -273,7 +276,10 @@ print("Tabelas Bronze publicadas com sucesso.")
 
 # COMMAND ----------
 # MAGIC %md
-# MAGIC ## Validação de volumetria
+# MAGIC ## Reconciliação de volumetria
+# MAGIC
+# MAGIC As contagens por arquivo e mês permitem comparar fonte e Bronze antes
+# MAGIC da execução das transformações seguintes.
 
 # COMMAND ----------
 
