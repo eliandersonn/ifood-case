@@ -134,8 +134,8 @@ Execute os arquivos da pasta `analysis/`:
    Yellow, agrupado pelo mês de início da corrida;
 3. `02_may_hourly_passengers.sql` — quantidade média de passageiros por
    corrida Yellow ou Green iniciada em cada hora do dia, durante maio;
-4. `03_executive_insights.sql` — variação mensal, rankings de volume e
-   ocupação e participação de Yellow e Green na Silver válida.
+4. `03_executive_insights.sql` — variação mensal, rankings de volume e de
+   passageiros médios por corrida, além da participação de Yellow e Green.
 
 Os SQLs `01` e `02` calculam as respostas diretamente a partir da Silver. As
 tabelas Gold materializam os mesmos resultados para consumo recorrente, e o

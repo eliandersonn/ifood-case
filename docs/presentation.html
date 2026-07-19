@@ -221,7 +221,7 @@
     .arrow { display: grid; place-items: center; color: var(--red); font-size: 22px; font-weight: 900; }
 
     .architecture-visual {
-      height: 430px;
+      height: 500px;
       overflow: hidden;
       border: 1px solid var(--line);
       border-radius: 22px;
@@ -230,9 +230,9 @@
     }
     .architecture-visual img {
       width: 100%;
-      height: auto;
+      height: 100%;
       display: block;
-      transform: translateY(-128px);
+      object-fit: contain;
     }
 
     .two-stage { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
@@ -275,9 +275,9 @@
     .bar-fill { height: 100%; min-width: 3px; border-radius: inherit; background: var(--red); }
     .bar-value { color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
 
-    .result-layout { display: grid; grid-template-columns: .82fr 1.18fr; gap: 18px; align-items: stretch; }
+    .result-layout { display: grid; grid-template-columns: 1.35fr .65fr; gap: 20px; align-items: stretch; }
     .chart-card { padding: 17px; border: 1px solid var(--line); border-radius: 19px; background: #fff; }
-    .chart-card svg { width: 100%; height: 240px; overflow: visible; }
+    .chart-card svg { width: 100%; height: 280px; overflow: visible; }
     .chart-grid { stroke: #eadfde; stroke-width: 1; }
     .chart-axis { fill: var(--muted); font-size: 11px; font-family: inherit; }
     .chart-line { fill: none; stroke: var(--red); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
@@ -287,7 +287,7 @@
     .insight-list { display: grid; gap: 10px; }
     .insight {
       display: grid;
-      grid-template-columns: 70px 1fr;
+      grid-template-columns: 110px 1fr;
       gap: 11px;
       align-items: center;
       padding: 12px 14px;
@@ -297,6 +297,54 @@
     }
     .insight .value { color: var(--red); font-size: 18px; font-weight: 900; text-align: center; }
     .insight p { color: var(--muted); font-size: 12px; line-height: 1.38; }
+    .cross-insight { padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+    .cross-insight strong { display: block; color: var(--red); font-size: 25px; letter-spacing: -.035em; }
+    .cross-insight h3 { margin-top: 5px; font-size: 14px; }
+    .cross-insight p { margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.42; }
+    .cross-insight.featured { min-height: 100%; display: grid; align-content: center; gap: 16px; }
+    .peak-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .peak-stat { padding: 14px; border-radius: 14px; background: var(--soft-red); }
+    .peak-stat b { display: block; color: var(--red); font-size: 22px; }
+    .peak-stat span { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; line-height: 1.35; }
+
+    .objective-layout { display: grid; grid-template-columns: 1.25fr .75fr; gap: 24px; align-items: stretch; }
+    .bullet-panel, .technology-panel, .evolution-panel {
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255,255,255,.94);
+    }
+    .bullet-list { display: grid; gap: 17px; margin: 18px 0 0; padding: 0; list-style: none; }
+    .bullet-list li { display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 760; }
+    .bullet-list li::before { content: ""; width: 9px; height: 9px; flex: 0 0 auto; border-radius: 50%; background: var(--red); }
+    .technology-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .technology-list span { padding: 10px 13px; border-radius: 999px; color: var(--wine); background: var(--soft-red); font-size: 13px; font-weight: 850; }
+
+    .layer-tags { display: flex; justify-content: center; gap: 12px; }
+    .layer-tags span { padding: 7px 13px; border-radius: 999px; color: var(--wine); background: var(--soft-red); font-size: 12px; font-weight: 850; }
+
+    .quality-layout { display: grid; grid-template-columns: 1.05fr .95fr; gap: 22px; align-items: stretch; }
+    .quality-flow { display: grid; grid-template-columns: 1fr; align-content: center; gap: 7px; padding: 20px; border-radius: 22px; color: #fff; background: #2b2022; }
+    .quality-step { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 10px 14px; border-radius: 13px; background: rgba(255,255,255,.07); }
+    .quality-step strong { color: #fff; font-size: 22px; }
+    .quality-step span { color: #d8cbce; font-size: 12px; }
+    .quality-arrow { color: #ff8e97; text-align: center; font-size: 18px; font-weight: 900; }
+    .quality-step.final { background: rgba(22,122,69,.45); }
+
+    .engineering-layout { display: grid; grid-template-columns: .72fr 1.28fr; gap: 18px; }
+    .engineering-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .engineering-card { min-height: 128px; padding: 20px; border: 1px solid var(--line); border-radius: 18px; background: #fff; }
+    .engineering-card h3 { color: var(--red); font-size: 18px; }
+    .engineering-card p { margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.4; }
+
+    .evolution-layout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+    .evolution-panel h3 { color: var(--red); font-size: 20px; }
+    .evolution-panel.future { border-color: #b9ddc8; background: var(--soft-green); }
+    .evolution-panel.future h3 { color: var(--green); }
+    .evolution-panel .bullet-list { gap: 12px; }
+    .evolution-panel .bullet-list li { font-size: 16px; }
+    .evolution-panel.future .bullet-list li::before { background: var(--green); }
+    .closing-statement { padding: 20px; border-radius: 18px; color: #fff; background: linear-gradient(135deg, var(--red), var(--wine)); font-size: 23px; font-weight: 850; text-align: center; }
 
     .runflow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; counter-reset: step; }
     .runstep {
@@ -352,7 +400,7 @@
     .control-btn:hover { background: var(--red); }
     .control-btn:focus-visible { outline: 3px solid rgba(234,29,44,.3); outline-offset: 2px; }
     .progress-track { height: 6px; overflow: hidden; border-radius: 99px; background: #ddd0ce; }
-    .progress-bar { width: 11.11%; height: 100%; border-radius: inherit; background: var(--red); transition: width 180ms ease; }
+    .progress-bar { width: 12.5%; height: 100%; border-radius: inherit; background: var(--red); transition: width 180ms ease; }
     .counter { min-width: 58px; color: var(--muted); font-size: 12px; font-weight: 850; text-align: right; }
 
     .speaker-note { display: none; }
@@ -376,7 +424,7 @@
     @media (max-width: 1050px) {
       body { overflow: auto; }
       .deck { min-height: 820px; aspect-ratio: auto; }
-      .hero, .result-layout, .reconciliation { grid-template-columns: 1fr; }
+      .hero, .result-layout, .reconciliation, .objective-layout, .quality-layout, .engineering-layout, .evolution-layout { grid-template-columns: 1fr; }
       .hero-panel { display: none; }
       .arrow { transform: rotate(90deg); }
       .grid-4, .runflow { grid-template-columns: repeat(2, 1fr); }
@@ -384,7 +432,7 @@
     @media (max-width: 700px) {
       .deck { min-height: 960px; border-radius: 20px; }
       .slide { padding: 26px 21px; overflow-y: auto; }
-      .grid-2, .grid-3, .grid-4, .two-stage, .runflow, .model-strip { grid-template-columns: 1fr; }
+      .grid-2, .grid-3, .grid-4, .two-stage, .runflow, .model-strip, .engineering-cards { grid-template-columns: 1fr; }
       .model-strip .arrow { display: none; }
       .footer { display: none; }
       .control-btn .label { display: none; }
@@ -408,214 +456,182 @@
         <header class="topbar"><div class="brand"><img src="assets/ifood.svg" alt="iFood"></div><span class="slide-number">CASE TÉCNICO · DATA ARCHITECTURE</span></header>
         <div class="content hero">
           <div class="title-block">
-            <div class="eyebrow">Case técnico iFood · Data Architecture</div>
             <h1>NYC Taxi<br><span class="red">Data Pipeline</span></h1>
-            <p class="lead">Ingestão, tratamento, disponibilização e análise dos dados de Yellow e Green Taxi com PySpark e Databricks.</p>
+            <p class="lead">Ingestão · Qualidade · Consumo · Análises</p>
             <div class="chips" style="margin-top:14px">
-              <span class="chip">Apache Spark 4.1</span><span class="chip">Databricks</span><span class="chip">Delta Lake</span><span class="chip">Unity Catalog</span><span class="chip">SQL</span>
+              <span class="chip">Spark</span><span class="chip">Databricks</span><span class="chip">Delta Lake</span><span class="chip">Unity Catalog</span><span class="chip">SQL</span>
             </div>
           </div>
           <div class="hero-panel">
             <div>
-              <strong>16,5 mi</strong><span>corridas processadas</span>
+              <strong>16,5 milhões</strong><span>de corridas na Bronze</span>
               <div class="hero-rule"></div>
-              <strong>99,08%</strong><span>aprovadas na Silver</span>
-              <small>Yellow + Green Taxi · 10 Parquets oficiais</small>
+              <strong>99,08%</strong><span>válidas após deduplicação e qualidade</span>
             </div>
           </div>
         </div>
-        <footer class="footer"><span>Elianderson Lima Costa · Engenharia de Dados</span><span>Resultado: ingestão → consumo → análise</span></footer>
+        <footer class="footer"><span>Elianderson Lima · Engenharia de Dados</span><span>Case técnico iFood</span></footer>
         <template class="speaker-note"><strong>Resumo:</strong> o pipeline processa 16,5 milhões de corridas de Yellow e Green Taxi, organiza os dados em uma arquitetura Lakehouse e publica informações confiáveis para consumo SQL. Após os controles de qualidade, 99,08% dos registros foram aprovados na Silver.</template>
       </article>
 
       <article class="slide" aria-hidden="true">
-        <header class="topbar"><div class="brand"><img src="assets/ifood.svg" alt="iFood"></div><span class="slide-number">01 · PROBLEMA E CRITÉRIOS</span></header>
+        <header class="topbar"><div class="brand"><img src="assets/ifood.svg" alt="iFood"></div><span class="slide-number">01 · OBJETIVO</span></header>
         <div class="content">
-          <div class="title-block"><div class="eyebrow">O que precisava ser demonstrado</div><h2>O case pede um fluxo completo — não apenas duas queries</h2></div>
-          <div class="grid-3">
-            <div class="card"><div class="card-number">1</div><h3>Ingestão</h3><p>Armazenar os dados originais de janeiro a maio de 2023 em uma Landing Zone e criar o Data Lake do zero.</p></div>
-            <div class="card"><div class="card-number">2</div><h3>Disponibilização</h3><p>Modelar uma camada estruturada e consultável por SQL, preservando o contrato mínimo exigido.</p></div>
-            <div class="card"><div class="card-number">3</div><h3>Análise</h3><p>Responder às duas perguntas com PySpark/SQL e comunicar as definições e resultados sem ambiguidade.</p></div>
-          </div>
-          <div class="grid-2">
-            <div>
-              <h3 style="margin-bottom:9px">Contrato obrigatório da Yellow Silver</h3>
-              <div class="contract"><code>VendorID</code><code>passenger_count</code><code>total_amount</code><code>tpep_pickup_datetime</code><code>tpep_dropoff_datetime</code></div>
+          <div class="title-block"><div class="eyebrow">O que o case pediu?</div><h2>Objetivo do case</h2></div>
+          <div class="objective-layout">
+            <div class="bullet-panel">
+              <ul class="bullet-list">
+                <li>Ingerir dados</li>
+                <li>Disponibilizar para consumo</li>
+                <li>Responder duas perguntas de negócio</li>
+              </ul>
             </div>
-            <div class="callout"><strong>Critérios do PDF:</strong> qualidade e organização do código, análise exploratória, justificativas técnicas, criatividade e clareza na comunicação.</div>
+            <div class="technology-panel">
+              <h3>Tecnologias escolhidas</h3>
+              <div class="technology-list"><span>Spark</span><span>Databricks</span><span>SQL</span><span>Delta</span></div>
+            </div>
           </div>
         </div>
-        <footer class="footer"><span>Escopo: Yellow + Green Taxi · jan–mai/2023</span><span>PySpark presente em todas as camadas de transformação</span></footer>
+        <footer class="footer"><span>Contrato Yellow: VendorID · passenger_count · total_amount · tpep_pickup_datetime · tpep_dropoff_datetime</span><span>Jan–mai/2023</span></footer>
         <template class="speaker-note"><strong>Resumo:</strong> o case exige ingestão, disponibilização e análise, além de avaliar organização do código, exploração dos dados, justificativas e comunicação. Yellow atende à primeira pergunta; Yellow e Green compõem o conjunto de táxis utilizado na segunda. A Silver de Yellow preserva integralmente o contrato mínimo solicitado.</template>
       </article>
 
       <article class="slide" aria-hidden="true">
         <header class="topbar"><div class="brand"><img src="assets/ifood.svg" alt="iFood"></div><span class="slide-number">02 · ARQUITETURA</span></header>
         <div class="content">
-          <div class="title-block"><div class="eyebrow">Separação clara de responsabilidades</div><h2>Uma arquitetura simples, auditável e orientada ao consumo</h2></div>
           <div class="architecture-visual" aria-label="Fluxo da arquitetura Lakehouse">
             <img src="assets/lakehouse-flow.svg" alt="NYC TLC para Landing, Bronze, Silver, Gold e Databricks SQL">
           </div>
+          <div class="layer-tags"><span>Landing</span><span>Bronze</span><span>Silver</span><span>Gold</span></div>
         </div>
-        <footer class="footer"><span>Landing ≠ Bronze: arquivo original e tabela estruturada têm papéis diferentes</span><span>Sem infraestrutura externa desnecessária ao case</span></footer>
-        <template class="speaker-note"><strong>Resumo:</strong> a arquitetura separa preservação, estruturação, qualidade e consumo. A Landing mantém os arquivos originais; a Bronze estabelece o contrato técnico; a Silver disponibiliza corridas válidas e quarentena; a Gold materializa as respostas recorrentes para SQL.</template>
+        <footer class="footer"><span>Fonte oficial → preservação → estruturação → qualidade → consumo</span><span>Lakehouse no Databricks</span></footer>
+        <template class="speaker-note"><strong>Resumo:</strong> a arquitetura separa preservação, estruturação, qualidade e consumo. A Landing mantém os Parquets originais; a Bronze adiciona contrato técnico e rastreabilidade; a Silver disponibiliza dados válidos e quarentena; a Gold materializa as duas respostas do case.</template>
       </article>
 
       <article class="slide" aria-hidden="true">
-        <header class="topbar"><div class="brand"><img src="assets/ifood.svg" alt="iFood"></div><span class="slide-number">03 · INGESTÃO E MODELO</span></header>
+        <header class="topbar"><div class="brand"><img src="assets/ifood.svg" alt="iFood"></div><span class="slide-number">03 · QUALIDADE E RECONCILIAÇÃO</span></header>
         <div class="content">
-          <div class="title-block"><div class="eyebrow">Decisões de implementação</div><h2>Automação idempotente e contrato explícito</h2></div>
-          <div class="two-stage">
-            <div class="stage">
-              <div class="stage-head"><span>A</span><h3>Fonte → Landing</h3></div>
-              <ul><li>período parametrizado por <span class="mono">start_month</span> e <span class="mono">end_month</span>;</li><li>download em chunks, três tentativas e arquivo temporário;</li><li>arquivos existentes são ignorados: reexecutar não duplica;</li><li>validação dos dez arquivos antes de publicar a Bronze.</li></ul>
-            </div>
-            <div class="stage">
-              <div class="stage-head"><span>B</span><h3>Landing → Bronze</h3></div>
-              <ul><li>leitura individual para absorver diferenças entre meses;</li><li>casts explícitos antes do <span class="mono">unionByName</span>;</li><li><span class="mono">source_file</span>, <span class="mono">source_month</span> e <span class="mono">ingested_at</span>;</li><li>Delta particionado pelo mês de origem.</li></ul>
-            </div>
-          </div>
-          <div class="model-strip">
-            <div class="model-node"><strong>Yellow Silver</strong><br>preserva nomes <span class="mono">tpep_*</span></div><div class="arrow">+</div>
-            <div class="model-node"><strong>Green Silver</strong><br>normaliza nomes <span class="mono">lpep_*</span></div><div class="arrow">→</div>
-            <div class="model-node"><strong>Silver unificada</strong><br><span class="mono">taxi_type</span> + datas padronizadas</div>
-          </div>
-          <div class="callout"><strong>Escolha consciente:</strong> full refresh com <span class="mono">overwrite</span> para o recorte fixo torna a execução simples e determinística. A coluna <span class="mono">source_month</span> prepara a evolução incremental.</div>
-        </div>
-        <footer class="footer"><span>Granularidade Silver: uma corrida válida e deduplicada</span><span>Novos meses sem alterar a lógica</span></footer>
-        <template class="speaker-note"><strong>Resumo:</strong> a ingestão é parametrizada, utiliza retry e escrita temporária e evita baixar novamente arquivos existentes. Os Parquets mensais são lidos individualmente e convertidos antes da união para controlar possíveis diferenças de tipo. A modelagem preserva o contrato Yellow e oferece uma Silver unificada para análises combinadas.</template>
-      </article>
-
-      <article class="slide" aria-hidden="true">
-        <header class="topbar"><div class="brand"><img src="assets/ifood.svg" alt="iFood"></div><span class="slide-number">04 · QUALIDADE E RECONCILIAÇÃO</span></header>
-        <div class="content">
-          <div class="title-block"><div class="eyebrow">Não basta limpar: é preciso provar</div><h2>Qualidade observável, sem descarte silencioso</h2></div>
-          <div class="grid-4">
-            <div class="metric"><strong>16.526.016</strong><span>registros na Bronze</span></div>
-            <div class="metric"><strong>138</strong><span>duplicidades removidas</span></div>
-            <div class="metric"><strong>152.239</strong><span>registros em quarentena · 0,92%</span></div>
-            <div class="metric green"><strong>16.373.639</strong><span>corridas válidas · 99,08%</span></div>
-          </div>
-          <div class="reconciliation">
-            <div>
-              <div class="equation">
-                <div><strong>16.526.016</strong><small>Bronze</small></div><span class="op">−</span><div><strong>138</strong><small>duplicados</small></div><span class="op">−</span><div><strong>152.239</strong><small>quarentena</small></div><span class="op">=</span><div><strong>16.373.639</strong><small>Silver</small></div>
-              </div>
-              <div class="callout green" style="margin-top:11px"><strong>Quality gates:</strong> o pipeline falha se contrato, reconciliação, meses Gold ou cobertura das 24 horas estiverem incompletos.</div>
+          <div class="title-block"><div class="eyebrow">Como a qualidade foi comprovada?</div><h2>Todo registro possui um destino conhecido</h2></div>
+          <div class="quality-layout">
+            <div class="quality-flow">
+              <div class="quality-step"><strong>Bronze</strong><span>16.526.016</span></div>
+              <div class="quality-arrow">↓</div>
+              <div class="quality-step"><strong>Duplicados</strong><span>138 removidos</span></div>
+              <div class="quality-arrow">↓</div>
+              <div class="quality-step"><strong>Quarentena</strong><span>152.239 · 0,92%</span></div>
+              <div class="quality-arrow">↓</div>
+              <div class="quality-step final"><strong>Silver</strong><span>16.373.639 · 99,08%</span></div>
             </div>
             <div class="card">
-              <h3 style="margin-bottom:11px">Ocorrências por regra de quarentena</h3>
+              <h3 style="margin-bottom:16px">Regras de quarentena</h3>
               <div class="bars">
                 <div class="bar-row"><span>total_amount ≤ 0</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-value">145.444</span></div>
                 <div class="bar-row"><span>duração ≤ 0</span><div class="bar-track"><div class="bar-fill" style="width:4.54%"></div></div><span class="bar-value">6.596</span></div>
                 <div class="bar-row"><span>pickup fora do mês</span><div class="bar-track"><div class="bar-fill" style="width:.34%"></div></div><span class="bar-value">485</span></div>
                 <div class="bar-row"><span>duração &gt; 24h</span><div class="bar-track"><div class="bar-fill" style="width:.07%"></div></div><span class="bar-value">94</span></div>
               </div>
-              <p>Uma corrida pode violar mais de uma regra; por isso as ocorrências não devem ser somadas.</p>
+              <p style="margin-top:16px">Uma corrida pode violar mais de uma regra.</p>
             </div>
           </div>
-          <div class="callout"><strong>Decisão de negócio:</strong> <span class="mono">passenger_count</span> nulo ou não positivo permanece na Silver financeira, mas é excluído somente da média de passageiros.</div>
         </div>
-        <footer class="footer"><span>Dimensões: conformidade · completude · validade · consistência · unicidade</span><span>Quarentena preserva registro + motivos</span></footer>
+        <footer class="footer"><span>Quarentena preserva o registro e seus motivos</span><span>passenger_count inválido é excluído apenas da métrica de passageiros</span></footer>
         <template class="speaker-note"><strong>Resumo:</strong> a reconciliação comprova que todos os registros da Bronze possuem um destino conhecido: Silver, quarentena ou remoção por duplicidade. Registros inválidos são preservados com seus motivos. A validade de passenger_count depende do uso: valores nulos ou não positivos permanecem disponíveis para análises financeiras, mas não participam da métrica de passageiros.</template>
       </article>
 
       <article class="slide" aria-hidden="true">
-        <header class="topbar"><div class="brand"><img src="assets/ifood.svg" alt="iFood"></div><span class="slide-number">05 · PERGUNTA 1</span></header>
+        <header class="topbar"><div class="brand"><img src="assets/ifood.svg" alt="iFood"></div><span class="slide-number">04 · PERGUNTA 1</span></header>
         <div class="content">
-          <div class="title-block"><div class="eyebrow">Yellow Taxi · janeiro a maio</div><h2>Qual o <span class="red">valor total médio por corrida</span> em cada mês?</h2></div>
-          <div class="callout"><strong>Definição:</strong> <span class="mono">AVG(total_amount)</span> entre corridas Yellow válidas, agrupadas pelo mês de início. Não representa gasto médio por passageiro.</div>
+          <div class="title-block"><div class="eyebrow">Yellow Taxi · janeiro a maio de 2023</div><h2>Qual o <span class="red">valor total médio por corrida Yellow</span> em cada mês?</h2></div>
           <div class="result-layout">
-            <div class="insight-list">
-              <div class="insight"><div class="value">29,46</div><p><strong>maior média do período</strong><br>observada em maio</p></div>
-              <div class="insight"><div class="value">+7,3%</div><p><strong>valor médio por corrida</strong><br>entre janeiro e maio</p></div>
-              <div class="insight"><div class="value">+14,5%</div><p><strong>volume de corridas válidas</strong><br>entre janeiro e maio</p></div>
-              <div class="insight"><div class="value">+22,9%</div><p><strong>soma de total_amount</strong><br>entre janeiro e maio</p></div>
-            </div>
             <div class="chart-card">
-              <h3>AVG(total_amount) por mês de início</h3>
+              <h3>Valor total médio por corrida</h3>
               <svg class="line-chart" viewBox="0 0 720 260" role="img" aria-label="Valor médio mensal por corrida Yellow" data-values="27.45,27.34,28.27,28.76,29.46" data-labels="Jan,Fev,Mar,Abr,Mai" data-min="27" data-max="30"></svg>
+            </div>
+            <div class="insight-list">
+              <div class="cross-insight">
+                <strong>US$ 29,46</strong>
+                <h3>valor médio em maio</h3>
+                <p>Maior resultado do período.</p>
+              </div>
+              <div class="cross-insight">
+                <strong>+22,9%</strong>
+                <h3>crescimento do valor total mensal</h3>
+                <p>Mais corridas (+14,5%) e maior valor médio por corrida (+7,3%) atuaram juntos entre janeiro e maio.</p>
+              </div>
             </div>
           </div>
         </div>
-        <footer class="footer"><span>Fonte analítica: workspace.nyc_taxi_silver.yellow_taxi_trips</span><span>5 meses · 16.035.750 corridas Yellow válidas</span></footer>
+        <footer class="footer"><span>AVG(total_amount) · não representa gasto por passageiro</span><span>16.035.750 corridas Yellow válidas</span></footer>
         <template class="speaker-note"><strong>Resumo:</strong> a primeira métrica representa o valor de total_amount médio por corrida Yellow válida, agrupado pelo mês de início, e não um valor por passageiro. Maio apresentou simultaneamente a maior média, o maior volume de corridas e a maior soma de total_amount do período.</template>
       </article>
 
       <article class="slide" aria-hidden="true">
-        <header class="topbar"><div class="brand"><img src="assets/ifood.svg" alt="iFood"></div><span class="slide-number">06 · PERGUNTA 2</span></header>
+        <header class="topbar"><div class="brand"><img src="assets/ifood.svg" alt="iFood"></div><span class="slide-number">05 · PERGUNTA 2</span></header>
         <div class="content">
-          <div class="title-block"><div class="eyebrow">Yellow + Green Taxi · maio</div><h2>Qual a <span class="red">quantidade média de passageiros por corrida</span> em cada hora?</h2></div>
-          <div class="callout"><strong>Definição:</strong> <span class="mono">AVG(passenger_count)</span> por hora de início, considerando corridas válidas de maio com contagem positiva.</div>
+          <div class="title-block"><div class="eyebrow">Yellow + Green Taxi · maio de 2023</div><h2>Qual a <span class="red">quantidade média de passageiros por corrida</span>, por hora de início em maio?</h2></div>
           <div class="result-layout">
-            <div class="insight-list">
-              <div class="insight"><div class="value">1,45</div><p><strong>maior ocupação média</strong><br>às 2h e 3h</p></div>
-              <div class="insight"><div class="value">1,26</div><p><strong>menor ocupação média</strong><br>às 6h</p></div>
-              <div class="insight"><div class="value">18h</div><p><strong>maior volume elegível</strong><br>242.975 corridas</p></div>
-              <div class="insight"><div class="value">97,94%</div><p><strong>participação de Yellow</strong><br>na Silver válida</p></div>
-            </div>
             <div class="chart-card">
-              <h3>AVG(passenger_count) por hora de início</h3>
-              <svg class="line-chart" viewBox="0 0 720 260" role="img" aria-label="Média de passageiros por corrida e hora" data-values="1.43,1.44,1.45,1.45,1.40,1.28,1.26,1.28,1.29,1.31,1.35,1.36,1.37,1.38,1.39,1.40,1.40,1.39,1.38,1.39,1.40,1.42,1.43,1.42" data-labels="0h,1h,2h,3h,4h,5h,6h,7h,8h,9h,10h,11h,12h,13h,14h,15h,16h,17h,18h,19h,20h,21h,22h,23h" data-min="1.2" data-max="1.5" data-sparse="true"></svg>
+              <h3>Média de passageiros por corrida</h3>
+              <svg class="line-chart" viewBox="0 0 720 260" role="img" aria-label="Média de passageiros por corrida e hora em maio" data-values="1.43,1.44,1.45,1.45,1.40,1.28,1.26,1.28,1.29,1.31,1.35,1.36,1.37,1.38,1.39,1.40,1.40,1.39,1.38,1.39,1.40,1.42,1.43,1.42" data-labels="0h,1h,2h,3h,4h,5h,6h,7h,8h,9h,10h,11h,12h,13h,14h,15h,16h,17h,18h,19h,20h,21h,22h,23h" data-min="1.2" data-max="1.5" data-sparse="true" data-show-values="true"></svg>
+            </div>
+            <div class="insight-list">
+              <div class="cross-insight featured">
+                <div>
+                  <strong>Picos distintos</strong>
+                  <h3>volume e média de passageiros</h3>
+                </div>
+                <div class="peak-grid">
+                  <div class="peak-stat"><b>1,45</b><span>maior média<br>2h e 3h</span></div>
+                  <div class="peak-stat"><b>242.975</b><span>maior volume<br>18h</span></div>
+                </div>
+                <p>O horário mais movimentado não é o horário com a maior média de passageiros por corrida.</p>
+              </div>
             </div>
           </div>
-          <div class="callout green"><strong>Leitura conjunta:</strong> demanda e ocupação não atingem o pico no mesmo horário. Foram consideradas 3.382.367 corridas elegíveis; a métrica combinada é predominantemente influenciada por Yellow.</div>
         </div>
-        <footer class="footer"><span>Valores nulos, zero e negativos são excluídos somente desta métrica</span><span>24 horas validadas automaticamente</span></footer>
-        <template class="speaker-note"><strong>Resumo:</strong> a segunda métrica calcula passageiros por corrida para cada hora de início em maio. A maior ocupação média ocorreu às 2h e 3h, enquanto o maior volume ocorreu às 18h, evidenciando que ocupação e demanda são conceitos diferentes. A participação de Yellow domina o resultado combinado.</template>
+        <footer class="footer"><span>AVG(passenger_count) · faixa observada: 1,26–1,45</span><span>3.382.367 corridas elegíveis · 24 horas</span></footer>
+        <template class="speaker-note"><strong>Resumo:</strong> a segunda métrica calcula a média de passageiros por corrida para cada hora de início em maio. A maior média ocorreu às 2h e 3h, enquanto o maior volume ocorreu às 18h, mostrando que essas métricas descrevem comportamentos diferentes. A participação de Yellow domina o resultado combinado.</template>
       </article>
 
       <article class="slide" aria-hidden="true">
-        <header class="topbar"><div class="brand"><img src="assets/ifood.svg" alt="iFood"></div><span class="slide-number">07 · ENGENHARIA E REPRODUTIBILIDADE</span></header>
+        <header class="topbar"><div class="brand"><img src="assets/ifood.svg" alt="iFood"></div><span class="slide-number">06 · ENGENHARIA E REPRODUTIBILIDADE</span></header>
         <div class="content">
-          <div class="title-block"><div class="eyebrow">Do clone à consulta</div><h2>Uma entrega que outro engenheiro consegue executar e auditar</h2></div>
-          <div class="grid-2">
+          <div class="title-block"><div class="eyebrow">Por que a solução é confiável?</div><h2>Controles essenciais para executar e auditar</h2></div>
+          <div class="engineering-layout">
             <div class="repo-tree">ifood-case/
-├── src/       # pipeline PySpark
-├── analysis/  # validações e respostas SQL
-├── docs/      # arquitetura, decisões e resultados
-└── README.md  # execução ponta a ponta</div>
-            <div class="grid-2">
-              <div class="card"><h3>Idempotência</h3><p>Landing ignora arquivos existentes; tabelas são substituídas sem duplicar registros.</p></div>
-              <div class="card"><h3>Observabilidade</h3><p>Volumetria, reconciliação, quarentena e quality gates durante a execução.</p></div>
-              <div class="card"><h3>Governança</h3><p>Unity Catalog registra tabelas e linhagem; Delta mantém histórico transacional.</p></div>
-              <div class="card"><h3>Consumo</h3><p>Silver para exploração; Gold para métricas recorrentes; SQLs reproduzem as respostas.</p></div>
+├── src/
+├── analysis/
+├── docs/
+└── README.md</div>
+            <div class="engineering-cards">
+              <div class="engineering-card"><h3>Idempotência</h3><p>Reexecução sem duplicidade.</p></div>
+              <div class="engineering-card"><h3>Observabilidade</h3><p>Volumetria, reconciliação e quality gates.</p></div>
+              <div class="engineering-card"><h3>Governança</h3><p>Unity Catalog e histórico Delta.</p></div>
+              <div class="engineering-card"><h3>Reprodutibilidade</h3><p>GitHub, ordem de execução e SQLs versionados.</p></div>
             </div>
           </div>
-          <div class="runflow">
-            <div class="runstep"><strong>00_setup.py</strong><small>schemas e Landing</small></div>
-            <div class="runstep"><strong>01_bronze_ingestion.py</strong><small>fonte, Landing e Bronze</small></div>
-            <div class="runstep"><strong>02_silver_transformation.py</strong><small>qualidade e consumo</small></div>
-            <div class="runstep"><strong>03_gold_analytics.py</strong><small>métricas e validações</small></div>
-          </div>
         </div>
-        <footer class="footer"><span>GitHub como fonte oficial do código</span><span>README documenta pré-requisitos, ordem e resultados esperados</span></footer>
+        <footer class="footer"><span>GitHub como fonte oficial</span><span>00 Setup → 01 Bronze → 02 Silver → 03 Gold</span></footer>
         <template class="speaker-note"><strong>Resumo:</strong> o GitHub concentra código, análises, documentação e instruções de execução. Os notebooks de src constroem e publicam as camadas; os arquivos de analysis consultam, validam e interpretam os dados produzidos. Idempotência, quality gates, Unity Catalog e Delta apoiam reprodutibilidade e auditoria.</template>
       </article>
 
       <article class="slide" aria-hidden="true">
-        <header class="topbar"><div class="brand"><img src="assets/ifood.svg" alt="iFood"></div><span class="slide-number">08 · TRADE-OFFS E EVOLUÇÃO</span></header>
+        <header class="topbar"><div class="brand"><img src="assets/ifood.svg" alt="iFood"></div><span class="slide-number">07 · TRADE-OFFS E EVOLUÇÃO</span></header>
         <div class="content">
-          <div class="title-block"><div class="eyebrow">Simplicidade agora, caminho claro para escala</div><h2>O desenho atende ao case sem esconder as decisões de produção</h2></div>
-          <table class="comparison" aria-label="Comparação entre o case e sua evolução para produção">
-            <thead><tr><th>Dimensão</th><th>Escolha no case</th><th>Evolução em produção</th></tr></thead>
-            <tbody>
-              <tr><td>Carga</td><td>full refresh idempotente para cinco meses</td><td class="future">replaceWhere por mês ou MERGE para alterações</td></tr>
-              <tr><td>Orquestração</td><td>quatro notebooks executados em ordem</td><td class="future">Databricks Jobs, dependências, retry e alertas</td></tr>
-              <tr><td>Qualidade</td><td>regras objetivas, quarentena e gates</td><td class="future">SLAs, tendências, alertas e ownership por domínio</td></tr>
-              <tr><td>Rede</td><td>endpoint público da NYC TLC autorizado</td><td class="future">egresso governado ou Landing corporativa aprovada</td></tr>
-              <tr><td>Consumo</td><td>duas tabelas Gold orientadas ao case</td><td class="future">contratos, catálogo de métricas e atualização incremental</td></tr>
-            </tbody>
-          </table>
-          <div class="grid-2">
-            <div class="callout"><strong>Por que não complicar?</strong> streaming, MCP, ML e ferramentas externas não melhorariam os requisitos deste recorte; adicionariam operação sem benefício proporcional.</div>
-            <div class="callout green"><strong>Resultado final:</strong> uma solução concisa, explicável, auditável e preparada para evoluir sem remodelar as camadas.</div>
+          <div class="title-block"><div class="eyebrow">Como a solução pode evoluir?</div><h2>Simplicidade no case, caminho claro para escala</h2></div>
+          <div class="evolution-layout">
+            <div class="evolution-panel">
+              <h3>Escolhas para o case</h3>
+              <ul class="bullet-list"><li>Full refresh</li><li>Execução simples</li><li>Gold específica</li><li>Regras objetivas</li></ul>
+            </div>
+            <div class="evolution-panel future">
+              <h3>Evolução</h3>
+              <ul class="bullet-list"><li>MERGE ou replaceWhere</li><li>Jobs e dependências</li><li>Monitoramento e alertas</li><li>Processamento incremental</li></ul>
+            </div>
           </div>
-          <div class="final-checks">
-            <span class="final-check">✓ ingestão entregue</span><span class="final-check">✓ consumo SQL entregue</span><span class="final-check">✓ duas respostas entregues</span><span class="final-check">✓ qualidade evidenciada</span><span class="final-check">✓ execução documentada</span>
-          </div>
+          <div class="closing-statement">Solução preparada para evoluir sem alterar a arquitetura.</div>
         </div>
-        <footer class="footer"><span>Elianderson Lima Costa · Case iFood</span><span>Obrigado · perguntas?</span></footer>
+        <footer class="footer"><span>Elianderson Lima · Case iFood</span><span>Obrigado · perguntas?</span></footer>
         <template class="speaker-note"><strong>Resumo:</strong> as escolhas atuais são proporcionais ao recorte de cinco meses e mantêm a solução objetiva. A presença de source_month, particionamento, quarentena e contratos permite evoluir para processamento incremental, orquestração, alertas e governança corporativa sem remodelar todo o pipeline.</template>
       </article>
     </section>
@@ -627,7 +643,7 @@
         <button class="control-btn" id="notes-toggle" type="button" aria-label="Mostrar resumo do slide">N</button>
       </div>
       <div class="progress-track" aria-hidden="true"><div class="progress-bar" id="progress"></div></div>
-      <div class="counter" id="counter" aria-live="polite">1 / 9</div>
+      <div class="counter" id="counter" aria-live="polite">1 / 8</div>
     </nav>
     <aside class="notes-panel" id="notes-panel" aria-live="polite"></aside>
   </main>
@@ -651,6 +667,7 @@
           const min = Number(svg.dataset.min);
           const max = Number(svg.dataset.max);
           const sparse = svg.dataset.sparse === 'true';
+          const showValues = svg.dataset.showValues === 'true';
           const left = 42, right = 690, top = 28, bottom = 218;
           const x = index => left + (index * (right - left) / (values.length - 1));
           const y = value => bottom - ((value - min) / (max - min) * (bottom - top));
@@ -684,10 +701,13 @@
               const axisLabel = create('text', { x: x(index), y: 244, class: 'chart-axis', 'text-anchor': 'middle' });
               axisLabel.textContent = labels[index]; svg.append(axisLabel);
             }
-            if (!sparse) {
+            const showPointValue = !sparse || (showValues && showLabel);
+            if (showPointValue) {
               svg.append(create('circle', { cx: x(index), cy: y(value), r: 5, class: 'chart-point' }));
               const valueText = create('text', { x: x(index), y: y(value) - 12, class: 'chart-value' });
-              valueText.textContent = value.toFixed(2).replace('.', ','); svg.append(valueText);
+              const formattedValue = value.toFixed(2).replace('.', ',');
+              valueText.textContent = chartIndex === 0 ? `US$ ${formattedValue}` : formattedValue;
+              svg.append(valueText);
             }
           });
         });

@@ -56,9 +56,9 @@ ORDER BY pickup_month;
 
 -- COMMAND ----------
 
--- Demanda versus ocupação em maio.
--- trip_volume_rank ordena as horas por número de corridas; occupancy_rank
--- ordena pela quantidade média de passageiros por corrida.
+-- Demanda versus quantidade média de passageiros por corrida em maio.
+-- trip_volume_rank ordena as horas por número de corridas;
+-- avg_passenger_count_rank ordena pela média de passageiros por corrida.
 SELECT
     pickup_hour,
     avg_passenger_count,
@@ -68,7 +68,7 @@ SELECT
     ) AS trip_volume_rank,
     DENSE_RANK() OVER (
         ORDER BY avg_passenger_count DESC
-    ) AS occupancy_rank
+    ) AS avg_passenger_count_rank
 FROM workspace.nyc_taxi_gold.all_taxis_may_hourly_avg_passenger_count
 ORDER BY pickup_hour;
 
