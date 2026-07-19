@@ -104,7 +104,7 @@ consideradas ocorreu às 18h.
   o volume de corridas válidas aumentou 14,5% e a soma de `total_amount`
   aumentou 22,9%;
 - a maior quantidade média de passageiros por corrida ocorreu às 2h e 3h,
-  mas o maior volume de corridas ocorreu às 18h: ocupação e demanda não atingem
+  mas o maior volume de corridas ocorreu às 18h: as duas métricas não atingem
   seus máximos no mesmo horário;
 - Yellow representa 97,94% das corridas válidas, contra 2,06% de Green. Logo,
   a média combinada de passageiros é predominantemente influenciada por
