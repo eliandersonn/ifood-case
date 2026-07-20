@@ -98,6 +98,20 @@ por exemplo, altere apenas `end_month` para `2023-06`.
 > de rede administrada pela organização. Consulte as
 > [limitações oficiais do Free Edition](https://docs.databricks.com/aws/en/getting-started/free-edition-limitations).
 
+Se a política de rede bloquear o download automático, existem duas alternativas
+de contingência sem alterar o restante do pipeline:
+
+1. baixar os dez arquivos pela página oficial da NYC TLC e enviá-los manualmente
+   pelo Catalog Explorer para o Volume `workspace.nyc_taxi_bronze.landing`,
+   localizado em `/Volumes/workspace/nyc_taxi_bronze/landing`; ou
+2. executar o download em uma máquina ou processo com acesso à internet e
+   automatizar o envio ao mesmo Volume com Databricks CLI ou API.
+
+Após o envio, reexecute `src/01_bronze_ingestion.py`. O notebook reconhece os
+arquivos existentes, ignora um novo download e continua a publicação da Bronze.
+Em ambientes Enterprise, a liberação ou o bloqueio do endpoint externo é uma
+decisão da política interna de segurança e rede da organização.
+
 ### 3. Validar a execução
 
 Ao final dos notebooks, confirme no **Catalog** a existência dos schemas:
@@ -162,9 +176,14 @@ quarentena, sem apagá-los silenciosamente:
 | Completude | campos essenciais não podem ser nulos |
 | Validade | `total_amount` deve ser positivo e a duração deve ser maior que zero e de no máximo 24 horas |
 | Consistência | pickup deve pertencer ao mês indicado pelo arquivo de origem |
-| Unicidade | remoção de corridas duplicadas por seus principais atributos |
+| Unicidade | remoção de registros coincidentes segundo uma chave composta |
 | Rastreabilidade | `source_file`, `source_month` e `ingested_at` na Bronze |
 | Reconciliação | contagens por tipo, mês e camada ao final de cada etapa |
+
+Como a fonte não fornece um identificador único de corrida no recorte utilizado,
+a premissa de unicidade usa a chave composta por `VendorID`, `passenger_count`,
+`total_amount`, horários de pickup e dropoff e categoria do táxi. Registros com
+todos esses atributos coincidentes são tratados como duplicidades pelo pipeline.
 
 `passenger_count` nulo ou não positivo não invalida uma corrida financeira.
 Esses registros permanecem na Silver, mas são excluídos da métrica de média de
@@ -190,8 +209,8 @@ das regras abaixo. A coluna `dq_failures` preserva todos os motivos encontrados.
 | `pickup_outside_source_month` | início da corrida fora do mês declarado pelo arquivo | 485 |
 
 As ocorrências somam mais que os 152.239 registros em quarentena porque uma
-mesma corrida pode violar mais de uma regra. As 138 duplicidades são removidas
-separadamente e não são classificadas como quarentena.
+mesma corrida pode violar mais de uma regra. Os 138 registros coincidentes na
+chave composta são removidos separadamente e não integram a quarentena.
 
 ## Idempotência e novos meses
 

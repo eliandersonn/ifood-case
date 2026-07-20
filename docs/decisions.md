@@ -50,7 +50,7 @@ desnecessárias ao escopo do case:
 - **validade:** `total_amount` positivo e duração maior que zero e de no
   máximo 24 horas;
 - **consistência:** pickup dentro do mês indicado pelo arquivo de origem;
-- **unicidade:** deduplicação pelos principais atributos da corrida;
+- **unicidade:** deduplicação por uma chave composta determinística;
 - **rastreabilidade:** arquivo, mês de origem e instante de ingestão;
 - **reconciliação:** contagens por arquivo, mês, camada e regra de rejeição.
 
@@ -71,8 +71,11 @@ Os códigos de quarentena refletem condições objetivas:
 | `trip_duration_over_24h` | duração superior a 24 horas |
 | `pickup_outside_source_month` | início fora do mês declarado pelo arquivo |
 
-Uma corrida pode registrar mais de um código. Duplicidades são removidas por
-um controle próprio e não são enviadas para quarentena.
+Como a fonte não fornece um identificador único de corrida no recorte utilizado,
+a premissa de unicidade considera `VendorID`, `passenger_count`, `total_amount`,
+pickup, dropoff e `taxi_type`. Registros coincidentes em toda essa chave composta
+são removidos por um controle próprio e não são enviados para quarentena. Uma
+corrida rejeitada pode registrar mais de um código de qualidade.
 
 Essas regras são verificadas durante a execução dos notebooks e resumidas em
 `analysis/00_data_quality_overview.sql`.

@@ -7,12 +7,14 @@
 | Bronze Yellow | 16.186.386 |
 | Bronze Green | 339.630 |
 | Bronze total | 16.526.016 |
-| Duplicados removidos | 138 |
+| Registros removidos pela chave composta | 138 |
 | Silver válida | 16.373.639 |
 | Quarentena | 152.239 |
 
 A quarentena representa aproximadamente 0,92% dos registros após a
-deduplicação. Os dados rejeitados continuam disponíveis com os motivos em
+deduplicação. A premissa de unicidade considera a coincidência de `VendorID`,
+`passenger_count`, `total_amount`, pickup, dropoff e `taxi_type`. Os dados
+rejeitados continuam disponíveis com os motivos em
 `workspace.nyc_taxi_silver.taxi_trips_quarantine`.
 
 ### Motivos de quarentena
@@ -27,7 +29,8 @@ deduplicação. Os dados rejeitados continuam disponíveis com os motivos em
 As regras de campos essenciais nulos também são avaliadas, mas não tiveram
 ocorrências neste processamento. Uma corrida pode possuir mais de um motivo;
 por isso, a soma das ocorrências não representa a quantidade de registros em
-quarentena. As 138 duplicidades foram removidas em um controle separado.
+quarentena. Os 138 registros coincidentes na chave composta foram removidos em
+um controle separado.
 
 ### Perfil exploratório da Silver válida
 
