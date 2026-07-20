@@ -22,7 +22,9 @@ spark.sql(
 CATALOG = "workspace"
 
 schemas = {
-    "nyc_taxi_bronze": "Dados brutos e imutáveis da fonte NYC TLC.",
+    "nyc_taxi_bronze": (
+        "Dados estruturados da fonte com tipos padronizados e rastreabilidade."
+    ),
     "nyc_taxi_silver": "Dados tratados, validados e prontos para consumo SQL.",
     "nyc_taxi_gold": "Agregações analíticas orientadas ao negócio.",
 }

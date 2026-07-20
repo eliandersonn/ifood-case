@@ -75,8 +75,11 @@ all_trips_df = yellow_standard_df.unionByName(green_standard_df)
 # MAGIC ## Qualidade e deduplicação
 # MAGIC
 # MAGIC São avaliadas completude dos campos essenciais, validade dos valores e
-# MAGIC horários, consistência com o mês de origem e unicidade da corrida.
+# MAGIC horários, consistência com o mês de origem e unicidade por chave composta.
 # MAGIC Registros reprovados são preservados com os motivos na quarentena.
+# MAGIC Na ausência de um identificador único de corrida, registros coincidentes
+# MAGIC em `VendorID`, `passenger_count`, `total_amount`, pickup, dropoff e
+# MAGIC `taxi_type` são tratados como duplicidades.
 # MAGIC
 # MAGIC Uma corrida é enviada para a quarentena quando possui `VendorID`,
 # MAGIC `total_amount`, pickup ou dropoff nulo; `total_amount` não positivo;

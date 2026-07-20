@@ -68,7 +68,11 @@ Referências: [Unity Catalog lineage](https://docs.databricks.com/aws/en/data-go
 - `workspace.nyc_taxi_bronze.yellow_taxi_trips_raw`
 - `workspace.nyc_taxi_bronze.green_taxi_trips_raw`
 
-Além das colunas de origem, ambas recebem `source_file`, `source_month` e `ingested_at`. Os arquivos são lidos individualmente e têm o schema convertido antes do `unionByName`, prevenindo incompatibilidades de tipo entre meses.
+As cinco colunas selecionadas do contrato da fonte recebem tipos padronizados e
+são acompanhadas por `source_file`, `source_month` e `ingested_at`. Os Parquets
+completos e inalterados permanecem na Landing. Na Bronze, os arquivos são lidos
+individualmente antes do `unionByName`, prevenindo incompatibilidades de tipo
+entre meses e acrescentando rastreabilidade.
 
 O notebook Bronze mantém duas responsabilidades separadas em seções: primeiro
 baixa da fonte oficial para a Landing, com streaming, retry e escrita temporária;

@@ -535,7 +535,7 @@
           </div>
         </div>
         <footer class="footer"><span>Quarentena preserva o registro e seus motivos</span><span>passenger_count inválido é excluído apenas da métrica de passageiros</span></footer>
-        <template class="speaker-note"><strong>Resumo:</strong> a reconciliação comprova que todos os registros da Bronze possuem um destino conhecido: Silver, quarentena ou remoção por duplicidade. Registros inválidos são preservados com seus motivos. A validade de passenger_count depende do uso: valores nulos ou não positivos permanecem disponíveis para análises financeiras, mas não participam da métrica de passageiros.</template>
+        <template class="speaker-note"><strong>Resumo:</strong> a reconciliação comprova que todos os registros da Bronze possuem um destino conhecido: Silver, quarentena ou remoção por duplicidade. Como a fonte não fornece um identificador único de corrida, a deduplicação usa uma chave composta por fornecedor, passageiros, valor, horários e categoria. Registros inválidos são preservados com seus motivos. A validade de passenger_count depende do uso: valores nulos ou não positivos permanecem disponíveis para análises financeiras, mas não participam da métrica de passageiros.</template>
       </article>
 
       <article class="slide" aria-hidden="true">
