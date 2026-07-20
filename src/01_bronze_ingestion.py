@@ -279,10 +279,11 @@ print("Tabelas Bronze publicadas com sucesso.")
 
 # COMMAND ----------
 # MAGIC %md
-# MAGIC ## Reconciliação de volumetria
+# MAGIC ## Controle de volumetria da Bronze
 # MAGIC
-# MAGIC As contagens por arquivo e mês permitem comparar fonte e Bronze antes
-# MAGIC da execução das transformações seguintes.
+# MAGIC Exibe a quantidade de registros gravados na Bronze por arquivo e mês.
+# MAGIC Esse checkpoint confirma a presença e a volumetria de cada origem antes
+# MAGIC das transformações seguintes; a reconciliação consolidada ocorre na Silver.
 
 # COMMAND ----------
 

@@ -2,7 +2,8 @@
 # MAGIC %md
 # MAGIC # 00 — Setup do Lakehouse
 # MAGIC
-# MAGIC Inicializa e valida as camadas Bronze, Silver e Gold do pipeline.
+# MAGIC Cria os schemas Bronze, Silver e Gold e o Volume da Landing Zone.
+# MAGIC Ao final, exibe os objetos criados para confirmar o setup do Lakehouse.
 
 # COMMAND ----------
 

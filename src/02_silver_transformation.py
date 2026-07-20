@@ -2,7 +2,7 @@
 # MAGIC %md
 # MAGIC # 02 — Transformação Silver
 # MAGIC
-# MAGIC Padroniza Yellow e Green Taxi, aplica regras de qualidade e registra os
+# MAGIC Padroniza Yellow e Green Taxi, aplica regras de qualidade, registra os
 # MAGIC dados rejeitados em quarentena e publica tabelas Delta para consumo SQL.
 
 # COMMAND ----------
@@ -154,6 +154,10 @@ quarantine_df = quality_checked_df.filter(F.size("dq_failures") > 0)
 # COMMAND ----------
 # MAGIC %md
 # MAGIC ## Tabelas de consumo
+# MAGIC
+# MAGIC Publica tabelas válidas por categoria, uma visão unificada das corridas
+# MAGIC válidas e a quarentena com os motivos de reprovação. As colunas `tpep_*`
+# MAGIC obrigatórias do case são preservadas na tabela Yellow.
 
 # COMMAND ----------
 
@@ -199,11 +203,12 @@ print("Tabelas Silver e quarentena publicadas com sucesso.")
 
 # COMMAND ----------
 # MAGIC %md
-# MAGIC ## Validação automática do contrato e da reconciliação
+# MAGIC ## Validação do contrato e reconciliação das camadas
 # MAGIC
-# MAGIC A execução falha se o contrato obrigatório estiver incompleto, se as
-# MAGIC tabelas por categoria não fecharem com a tabela unificada ou se a
-# MAGIC reconciliação entre Bronze, duplicidades, Silver e quarentena divergir.
+# MAGIC A execução falha se o contrato obrigatório estiver incompleto, se Yellow
+# MAGIC e Green não fecharem com a Silver unificada ou se as saídas superarem a
+# MAGIC Bronze. O saldo entre Bronze, Silver e quarentena representa as
+# MAGIC duplicidades removidas antes da separação entre registros válidos e rejeitados.
 
 # COMMAND ----------
 

@@ -7,7 +7,7 @@
 
 -- COMMAND ----------
 
--- Reconciliação da Bronze por categoria e mês de origem.
+-- Controle de volumetria da Bronze por categoria e mês de origem.
 SELECT
     'yellow' AS taxi_type,
     source_month,
@@ -57,7 +57,7 @@ ORDER BY failure_count DESC;
 
 -- COMMAND ----------
 
--- Reconciliação final entre dados aprovados e quarentena.
+-- Volumetria das saídas após a deduplicação: Silver válida e quarentena.
 SELECT 'silver_valid' AS dataset, COUNT(*) AS row_count
 FROM workspace.nyc_taxi_silver.taxi_trips_unified
 
@@ -68,7 +68,7 @@ FROM workspace.nyc_taxi_silver.taxi_trips_quarantine;
 
 -- COMMAND ----------
 
--- Scorecard consolidado da execução.
+-- Reconciliação consolidada entre Bronze, duplicidades, Silver e quarentena.
 -- As taxas usam como base os registros após a remoção de duplicidades.
 WITH layer_counts AS (
     SELECT
